@@ -1,0 +1,67 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "module": "ESNext",
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "jsx": "react-jsx",
+        "strict": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noFallthroughCasesInSwitch": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@components/*": [
+                "./src/components/*"
+            ],
+            "@features/*": [
+                "./src/features/*"
+            ],
+            "@hooks/*": [
+                "./src/hooks/*"
+            ],
+            "@lib/*": [
+                "./src/lib/*"
+            ],
+            "@utils/*": [
+                "./src/utils/*"
+            ],
+            "@config/*": [
+                "./src/config/*"
+            ],
+            "@layouts/*": [
+                "./src/layouts/*"
+            ],
+            "@pages/*": [
+                "./src/pages/*"
+            ],
+            "@routes/*": [
+                "./src/routes/*"
+            ],
+            "@stores/*": [
+                "./src/stores/*"
+            ],
+            "@assets/*": [
+                "./src/assets/*"
+            ]
+        }
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

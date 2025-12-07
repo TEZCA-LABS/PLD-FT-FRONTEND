@@ -1,0 +1,9 @@
+# Assets - Images
+
+This directory contains image assets for the application.
+
+Add your images here and import them in your components:
+
+```javascript
+import logo from '@assets/images/logo.png';
+```
