@@ -250,18 +250,3 @@ Accede a las variables mediante `import.meta.env.VITE_*`
 - [TanStack Query Documentation](https://tanstack.com/query)
 - [Zustand Documentation](https://zustand-demo.pmnd.rs)
 
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/mi-feature`)
-3. Commit tus cambios (`git commit -m 'Add: mi feature'`)
-4. Push a la rama (`git push origin feature/mi-feature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia MIT.
-
----
-
-**Desarrollado con ❤️ siguiendo las mejores prácticas de la industria**
