@@ -1,17 +1,24 @@
-import { Routes, Route } from 'react-router-dom';
-import Home from '@pages/Home';
-import Login from '@pages/Login';
-import Register from '@pages/Register';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from '@pages/Dashboard';
+import SecureLoginPage from '@pages/SecureLoginPage';
+import SearchPage from '@pages/SearchPage';
+import UsersPage from '@pages/UsersPage';
+import RolesPage from '@pages/RolesPage';
+import AuditPage from '@pages/AuditPage';
+import AIChatPage from '@pages/AIChatPage';
 import NotFound from '@pages/NotFound';
 
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<Navigate to="/secure-login" replace />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/secure-login" element={<SecureLoginPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/roles" element={<RolesPage />} />
+            <Route path="/audit" element={<AuditPage />} />
+            <Route path="/ai-chat" element={<AIChatPage />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     );
