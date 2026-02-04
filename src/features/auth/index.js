@@ -6,8 +6,7 @@
 // Components
 export { LoginForm } from './components/LoginForm';
 export { RegisterForm } from './components/RegisterForm';
-
-// Hooks
+export { SecureLoginForm } from './components/SecureLoginForm';
 export { useLogin } from './hooks/useLogin';
 export { useRegister } from './hooks/useRegister';
 
