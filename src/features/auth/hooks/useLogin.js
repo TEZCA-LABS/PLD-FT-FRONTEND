@@ -13,11 +13,30 @@ export const useLogin = () => {
 
     return useMutation({
         mutationFn: login,
-        onSuccess: (data) => {
-            // Store auth data in Zustand store
-            setAuth(data.user, data.token);
-            // Redirect to dashboard
-            navigate('/dashboard');
+        onSuccess: async (data) => {
+            // Token is in data.access_token
+            const token = data.access_token;
+
+            // Store token temporarily or let authApi handle it (it uses localStorage)
+            localStorage.setItem('authToken', token);
+
+            try {
+                // Fetch current user details
+                // We need to import getCurrentUser dynamically or here to avoid cyclic dep if any, 
+                // but usually it's fine.
+                // Assuming authApi is 'api/authApi'
+                const { getCurrentUser } = await import('../api/authApi');
+                const user = await getCurrentUser();
+
+                // Store auth data in Zustand store
+                setAuth(user, token);
+
+                // Redirect to dashboard
+                navigate('/dashboard');
+            } catch (error) {
+                console.error('Failed to fetch user details after login:', error);
+                // Handle error (maybe clear token?)
+            }
         },
         onError: (error) => {
             console.error('Login error:', error);

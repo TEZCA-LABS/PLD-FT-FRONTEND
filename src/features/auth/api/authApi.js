@@ -10,7 +10,15 @@ import apiClient from '@lib/axios';
  * @returns {Promise} User data and token
  */
 export const login = async (credentials) => {
-    const response = await apiClient.post('/auth/login', credentials);
+    const formData = new URLSearchParams();
+    formData.append('username', credentials.email);
+    formData.append('password', credentials.password);
+
+    const response = await apiClient.post('/auth/login/access-token', formData, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    });
     return response.data;
 };
 
