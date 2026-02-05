@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useLogin } from '../hooks/useLogin';
+
 export const SecureLoginForm = () => {
     const [formData, setFormData] = useState({
         corporateId: '',
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
+    const { mutate: loginUser, isPending, isError, error } = useLogin();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,8 +21,12 @@ export const SecureLoginForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Secure Login Attempt:', formData);
-        // Add authentication logic here
+
+        // Map corporateId to email for the API
+        loginUser({
+            email: formData.corporateId,
+            password: formData.password
+        });
     };
 
     return (
@@ -37,6 +44,17 @@ export const SecureLoginForm = () => {
                             Por favor, autentique su identidad corporativa para acceder a datos financieros sensibles.
                         </p>
                     </div>
+                    {isError && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+                            <span className="material-symbols-outlined text-red-500 mt-0.5">error</span>
+                            <div>
+                                <p className="text-sm font-semibold text-red-800">Error de Autenticación</p>
+                                <p className="text-sm text-red-600 mt-1">
+                                    {error?.response?.data?.detail || 'No se pudo iniciar sesión. Verifique sus credenciales.'}
+                                </p>
+                            </div>
+                        </div>
+                    )}
                     <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-2">
                             <label className="text-[#121417] text-sm font-medium leading-none">
@@ -91,11 +109,23 @@ export const SecureLoginForm = () => {
                             </div>
                         </div>
                         <div className="flex flex-col gap-4 mt-2">
-                            <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary hover:bg-[#153461] active:bg-[#0f254a] text-white text-base font-bold leading-normal tracking-[0.015em] shadow-md transition-all group">
-                                <span className="truncate mr-2">Autenticar</span>
-                                <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
-                                    arrow_forward
-                                </span>
+                            <button
+                                className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary hover:bg-[#153461] active:bg-[#0f254a] disabled:opacity-70 disabled:cursor-not-allowed text-white text-base font-bold leading-normal tracking-[0.015em] shadow-md transition-all group"
+                                disabled={isPending}
+                            >
+                                {isPending ? (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <span>Autenticando...</span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <span className="truncate mr-2">Autenticar</span>
+                                        <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
+                                            arrow_forward
+                                        </span>
+                                    </>
+                                )}
                             </button>
                         </div>
                     </form>
