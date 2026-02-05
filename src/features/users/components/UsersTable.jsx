@@ -1,4 +1,16 @@
+import { useUsers } from '../hooks/useUsers';
+
 export const UsersTable = () => {
+    const { data: users, isLoading, isError } = useUsers();
+
+    if (isLoading) {
+        return <div className="p-8 text-center text-gray-500">Cargando usuarios...</div>;
+    }
+
+    if (isError) {
+        return <div className="p-8 text-center text-red-500">Error al cargar usuarios</div>;
+    }
+
     return (
         <div className="bg-white dark:bg-[#1a2432] rounded-xl shadow-sm border border-[#f0f2f4] dark:border-[#2d3a4b] overflow-hidden">
             <div className="overflow-x-auto">
@@ -8,52 +20,53 @@ export const UsersTable = () => {
                             <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-[#a0aec0] uppercase tracking-wider">Nombre</th>
                             <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-[#a0aec0] uppercase tracking-wider">Correo</th>
                             <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-[#a0aec0] uppercase tracking-wider">Rol</th>
-                            <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-[#a0aec0] uppercase tracking-wider">Ubicación</th>
                             <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-[#a0aec0] uppercase tracking-wider">Estado</th>
                             <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-[#a0aec0] uppercase tracking-wider text-right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[#f0f2f4] dark:divide-[#2d3a4b]">
-                        {/* Example Row 1 */}
-                        <tr className="hover:bg-gray-50 dark:hover:bg-[#243040] transition-colors group">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center gap-3">
-                                    <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">AG</div>
-                                    <span className="text-sm font-semibold dark:text-white">Alejandro García</span>
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#617289] dark:text-[#a0aec0]">alejandro.garcia@banco.com</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2.5 py-1 text-[11px] font-bold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">ADMIN</span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#617289] dark:text-[#a0aec0]">México CDMX</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center gap-1.5">
-                                    <span className="size-2 rounded-full bg-green-500"></span>
-                                    <span className="text-sm font-medium text-green-700 dark:text-green-400">Activo</span>
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                                <div className="flex items-center justify-end gap-1">
-                                    <button className="p-2 text-[#617289] dark:text-[#a0aec0] hover:text-primary hover:bg-primary/10 rounded-lg transition-all flex items-center justify-center" title="Editar usuario">
-                                        <span className="material-symbols-outlined text-[20px]">edit</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        {/* More rows can be added here */}
+                        {users?.map((user) => (
+                            <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-[#243040] transition-colors group">
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="flex items-center gap-3">
+                                        <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
+                                            {user.email.substring(0, 2).toUpperCase()}
+                                        </div>
+                                        <span className="text-sm font-semibold dark:text-white">{user.email}</span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-[#617289] dark:text-[#a0aec0]">{user.email}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full ${user.is_superuser ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' :
+                                            user.role === 'admin' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                                                'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                                        }`}>
+                                        {user.is_superuser ? 'SUPERUSER' : user.role ? user.role.toUpperCase() : 'USER'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className={`size-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                                        <span className={`text-sm font-medium ${user.is_active ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+                                            {user.is_active ? 'Activo' : 'Inactivo'}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right">
+                                    <div className="flex items-center justify-end gap-1">
+                                        <button className="p-2 text-[#617289] dark:text-[#a0aec0] hover:text-primary hover:bg-primary/10 rounded-lg transition-all flex items-center justify-center" title="Editar usuario">
+                                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
+            {/* Pagination UI intentionally simpler for now as backend returns list, but we can add pagination controls if backend supports it later properly */}
             <div className="px-6 py-4 flex items-center justify-between border-t border-[#f0f2f4] dark:border-[#2d3a4b]">
-                <p className="text-sm text-[#617289] dark:text-[#a0aec0]">Mostrando 1 a 4 de 24 usuarios</p>
-                <div className="flex gap-2">
-                    <button className="px-3 py-1 text-sm border border-[#f0f2f4] dark:border-[#2d3a4b] rounded-lg hover:bg-gray-50 dark:hover:bg-[#243040] dark:text-white disabled:opacity-50" disabled>Anterior</button>
-                    <button className="px-3 py-1 text-sm bg-primary text-white rounded-lg">1</button>
-                    <button className="px-3 py-1 text-sm border border-[#f0f2f4] dark:border-[#2d3a4b] rounded-lg hover:bg-gray-50 dark:hover:bg-[#243040] dark:text-white">2</button>
-                    <button className="px-3 py-1 text-sm border border-[#f0f2f4] dark:border-[#2d3a4b] rounded-lg hover:bg-gray-50 dark:hover:bg-[#243040] dark:text-white">3</button>
-                    <button className="px-3 py-1 text-sm border border-[#f0f2f4] dark:border-[#2d3a4b] rounded-lg hover:bg-gray-50 dark:hover:bg-[#243040] dark:text-white">Siguiente</button>
-                </div>
+                <p className="text-sm text-[#617289] dark:text-[#a0aec0]">Total usuarios: {users?.length || 0}</p>
             </div>
         </div>
     );
