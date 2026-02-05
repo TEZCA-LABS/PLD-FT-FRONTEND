@@ -1,4 +1,18 @@
-export const SearchFilters = () => {
+import React from 'react';
+
+export const SearchFilters = ({ onSearch }) => {
+    const [inputValue, setInputValue] = React.useState('');
+
+    const handleSubmit = () => {
+        if (onSearch) onSearch(inputValue);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+    };
+
     return (
         <div className="bg-white dark:bg-slate-850 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 p-5 flex flex-col gap-4">
             <div className="relative group">
@@ -9,9 +23,15 @@ export const SearchFilters = () => {
                     className="block w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base font-medium"
                     placeholder="Buscar por Nombre, RFC, Pasaporte o Palabra clave..."
                     type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
                 />
                 <div className="absolute inset-y-0 right-2 flex items-center">
-                    <button className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors">
+                    <button
+                        onClick={handleSubmit}
+                        className="px-4 py-1.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors"
+                    >
                         Buscar
                     </button>
                 </div>
