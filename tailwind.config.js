@@ -8,8 +8,21 @@ export default {
     theme: {
         extend: {
             colors: {
-                primary: "#1a427a",
-                "primary-light": "#2c5c9e",
+                primary: {
+                    DEFAULT: "#1a427a",
+                    50: '#f4f7fb',
+                    100: '#e8eff7',
+                    200: '#c6d6eb',
+                    300: '#a3bddf',
+                    400: '#5d8bc7',
+                    500: '#2c5c9e', // Previously primary-light
+                    600: '#1a427a', // Base primary
+                    700: '#153562',
+                    800: '#10284a',
+                    900: '#0b1c33',
+                    950: '#071221',
+                },
+                // "primary-light": "#2c5c9e", // Merged into primary-500
                 "background-light": "#fcfcfd",
                 "background-dark": "#151a23",
                 surface: "#ffffff",

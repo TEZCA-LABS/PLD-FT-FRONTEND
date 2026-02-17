@@ -6,10 +6,12 @@ import { Button, Input } from '@components/ui';
 
 const userSchema = z.object({
     email: z.string().email('Correo inválido'),
-    role: z.enum(['admin', 'analista', 'auditor'], {
+    role: z.enum(['admin', 'analista', 'auditor', 'consultant'], {
         errorMap: () => ({ message: 'Rol inválido' }),
     }),
     is_active: z.boolean().optional(),
+    is_superuser: z.boolean().optional(),
+    password: z.string().optional(),
 });
 
 export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
@@ -33,12 +35,16 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                 email: user.email,
                 role: user.role,
                 is_active: user.is_active,
+                is_superuser: user.is_superuser,
+                password: '', // Don't pre-fill password
             });
         } else {
             reset({
                 email: '',
                 role: 'analista',
                 is_active: true,
+                is_superuser: false,
+                password: '',
             });
         }
     }, [user, reset, isOpen]);
@@ -46,7 +52,12 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
     if (!isOpen) return null;
 
     const onSubmit = (data) => {
-        onSave(data);
+        // Remove password if empty string to avoid sending it
+        const finalData = { ...data };
+        if (finalData.password === '') {
+            delete finalData.password;
+        }
+        onSave(finalData);
     };
 
     return (
@@ -72,6 +83,17 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                     />
 
                     <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
+                        <Input
+                            type="password"
+                            placeholder={user ? "Dejar en blanco para mantener actual" : "Contraseña del usuario"}
+                            error={errors.password?.message}
+                            {...register('password')}
+                            className="dark:bg-[#243040] dark:text-white dark:border-gray-600"
+                        />
+                    </div>
+
+                    <div className="space-y-1">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Rol</label>
                         <select
                             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#243040] dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
@@ -80,20 +102,34 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                             <option value="admin">Administrador</option>
                             <option value="analista">Analista</option>
                             <option value="auditor">Auditor</option>
+                            <option value="consultant">Consultor</option>
                         </select>
                         {errors.role && <p className="text-sm text-red-600">{errors.role.message}</p>}
                     </div>
 
-                    <div className="flex items-center gap-2 mt-4 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                        <input
-                            type="checkbox"
-                            id="is_active"
-                            className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
-                            {...register('is_active')}
-                        />
-                        <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer select-none">
-                            Usuario Activo
-                        </label>
+                    <div className="flex flex-col gap-2 mt-4 p-2 rounded-lg bg-gray-50 dark:bg-white/5">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="is_active"
+                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                                {...register('is_active')}
+                            />
+                            <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+                                Usuario Activo
+                            </label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="is_superuser"
+                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
+                                {...register('is_superuser')}
+                            />
+                            <label htmlFor="is_superuser" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+                                Superusuario (Acceso total)
+                            </label>
+                        </div>
                     </div>
 
                     <div className="flex justify-end gap-3 mt-6 pt-2">
