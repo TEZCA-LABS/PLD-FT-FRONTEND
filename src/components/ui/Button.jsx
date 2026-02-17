@@ -4,7 +4,7 @@
  */
 
 const variants = {
-    primary: 'bg-primary-600 hover:bg-primary-700 text-white shadow-lg shadow-primary-500/50',
+    primary: 'bg-[#1a427a] hover:bg-[#153562] text-white shadow-lg shadow-[#1a427a]/50',
     secondary: 'bg-secondary-600 hover:bg-secondary-700 text-white shadow-lg shadow-secondary-500/50',
     outline: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50',
     ghost: 'text-primary-600 hover:bg-primary-50',
@@ -27,7 +27,7 @@ export const Button = ({
     onClick,
     ...props
 }) => {
-    const baseClasses = 'font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500';
+    const baseClasses = 'font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a427a]';
 
     return (
         <button
