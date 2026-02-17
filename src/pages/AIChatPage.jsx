@@ -1,15 +1,18 @@
 import { AIChatHeader, ChatSidebar, ChatInterface, ContextSidebar } from '@features/ai-chat';
+import { SidebarLayout } from '@layouts/SidebarLayout';
 
 const AIChatPage = () => {
     return (
-        <div className="bg-background-light dark:bg-background-dark text-[#121417] dark:text-white overflow-hidden h-screen flex flex-col font-display">
-            <AIChatHeader />
-            <div className="flex flex-1 overflow-hidden">
-                <ChatSidebar />
-                <ChatInterface />
-                <ContextSidebar />
+        <SidebarLayout fullWidth>
+            <div className="bg-background-light dark:bg-background-dark text-[#121417] dark:text-white flex flex-col h-full font-display">
+                <AIChatHeader />
+                <div className="flex flex-1 overflow-hidden">
+                    <ChatSidebar />
+                    <ChatInterface />
+                    <ContextSidebar />
+                </div>
             </div>
-        </div>
+        </SidebarLayout>
     );
 };
 

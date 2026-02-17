@@ -1,9 +1,9 @@
-import { AuditorLayout } from '@layouts/AuditorLayout';
+import { SidebarLayout } from '@layouts/SidebarLayout';
 import { AuditFilters, AuditLogTable } from '@features/audit';
 
 const AuditPage = () => {
     return (
-        <AuditorLayout>
+        <SidebarLayout>
             <div className="flex flex-wrap justify-between items-end gap-3 mb-6">
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
@@ -54,7 +54,7 @@ const AuditPage = () => {
                     Certificado Compliance GDPR/AML
                 </div>
             </div>
-        </AuditorLayout>
+        </SidebarLayout>
     );
 };
 
