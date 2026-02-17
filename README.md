@@ -29,7 +29,7 @@ src/
 │       ├── hooks/       # Hooks personalizados del feature
 │       └── index.js     # Public API (barrel file)
 ├── hooks/               # Hooks globales (useTheme, useWindowSize)
-├── layouts/             # Layouts de página (AuthLayout, DashboardLayout)
+├── layouts/             # Layouts de página (AuthLayout, SidebarLayout)
 ├── lib/                 # Configuración de librerías (axios, queryClient)
 ├── pages/               # Páginas/Rutas (composiciones de features)
 ├── routes/              # Definición de rutas
@@ -196,9 +196,9 @@ import { MiComponente } from '@features/mi-feature';
 
 const MiPagina = () => {
   return (
-    <DashboardLayout>
+    <SidebarLayout>
       <MiComponente />
-    </DashboardLayout>
+    </SidebarLayout>
   );
 };
 ```
@@ -227,8 +227,8 @@ const MiPagina = () => {
 El proyecto incluye un feature completo de autenticación:
 
 - **Login**: `/secure-login`
-- **Registro**: `/register`
-- **Dashboard**: `/dashboard` (requiere autenticación)
+- **Registro**: `/register` (si aplica)
+- **Rutas Protegidas**: `/search`, `/users`, `/roles`, `/audit`, `/ai-chat`
 
 El estado de autenticación se maneja con Zustand y persiste en localStorage.
 
