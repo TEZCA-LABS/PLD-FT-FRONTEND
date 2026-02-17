@@ -1,31 +1,38 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button, Input } from '@components/ui';
 
-const userSchema = z.object({
+const getSchema = (isEdit) => z.object({
     email: z.string().email('Correo inválido'),
     role: z.enum(['admin', 'auditor', 'consultant', 'user'], {
         errorMap: () => ({ message: 'Rol inválido' }),
     }),
     is_active: z.boolean().optional(),
     is_superuser: z.boolean().optional(),
-    password: z.string().optional(),
+    password: isEdit ? z.string().optional() : z.string().min(1, 'La contraseña es obligatoria para nuevos usuarios'),
+    master_password: isEdit ? z.string().optional() : z.string().min(1, 'La contraseña maestra es obligatoria'),
 });
 
 export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
+    const isEdit = !!user;
+    const schema = useMemo(() => getSchema(isEdit), [isEdit]);
+
     const {
         register,
         handleSubmit,
         reset,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(userSchema),
+        resolver: zodResolver(schema),
         defaultValues: {
             email: '',
             role: 'user',
             is_active: true,
+            is_superuser: false,
+            password: '',
+            master_password: '',
         },
     });
 
@@ -37,6 +44,7 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                 is_active: user.is_active,
                 is_superuser: user.is_superuser,
                 password: '', // Don't pre-fill password
+                master_password: '',
             });
         } else {
             reset({
@@ -45,6 +53,7 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                 is_active: true,
                 is_superuser: false,
                 password: '',
+                master_password: '',
             });
         }
     }, [user, reset, isOpen]);
@@ -52,10 +61,13 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
     if (!isOpen) return null;
 
     const onSubmit = (data) => {
-        // Remove password if empty string to avoid sending it
+        // Remove password/master_password if empty string to avoid sending it
         const finalData = { ...data };
         if (finalData.password === '') {
             delete finalData.password;
+        }
+        if (finalData.master_password === '') {
+            delete finalData.master_password;
         }
         onSave(finalData);
     };
@@ -131,6 +143,19 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                             </label>
                         </div>
                     </div>
+
+                    {!user && (
+                        <div className="space-y-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña Maestra</label>
+                            <Input
+                                type="password"
+                                placeholder="Contraseña maestra requerida para crear"
+                                error={errors.master_password?.message}
+                                {...register('master_password')}
+                                className="dark:bg-[#243040] dark:text-white dark:border-gray-600"
+                            />
+                        </div>
+                    )}
 
                     <div className="flex justify-end gap-3 mt-6 pt-2">
                         <Button variant="ghost" onClick={onClose} type="button">

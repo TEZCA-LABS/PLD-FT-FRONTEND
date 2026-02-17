@@ -1,37 +1,13 @@
-import { useState } from 'react';
-import { useUsers, useUpdateUser } from '../hooks/useUsers';
-import { UserModal } from './UserModal';
+import { useUsers } from '../hooks/useUsers';
 
-export const UsersTable = () => {
+export const UsersTable = ({ onEdit }) => {
     const { data: users, isLoading, isError } = useUsers();
-    const updateMutation = useUpdateUser();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingUser, setEditingUser] = useState(null);
 
     const roleNames = {
         admin: 'Administrador',
         user: 'Analista',
         auditor: 'Auditor',
         consultant: 'Consultor',
-    };
-
-    const handleEdit = (user) => {
-        setEditingUser(user);
-        setIsModalOpen(true);
-    };
-
-    const handleSaveUser = async (data) => {
-        if (editingUser) {
-            updateMutation.mutate(
-                { id: editingUser.id, data },
-                {
-                    onSuccess: () => {
-                        setIsModalOpen(false);
-                        setEditingUser(null);
-                    },
-                }
-            );
-        }
     };
 
     if (isLoading) {
@@ -86,7 +62,7 @@ export const UsersTable = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-right">
                                     <div className="flex items-center justify-end gap-1">
                                         <button
-                                            onClick={() => handleEdit(user)}
+                                            onClick={() => onEdit(user)}
                                             className="p-2 text-[#617289] dark:text-[#a0aec0] hover:text-primary hover:bg-primary/10 rounded-lg transition-all flex items-center justify-center"
                                             title="Editar usuario"
                                         >
@@ -103,14 +79,6 @@ export const UsersTable = () => {
             <div className="px-6 py-4 flex items-center justify-between border-t border-[#f0f2f4] dark:border-[#2d3a4b]">
                 <p className="text-sm text-[#617289] dark:text-[#a0aec0]">Total usuarios: {users?.length || 0}</p>
             </div>
-
-            <UserModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                user={editingUser}
-                onSave={handleSaveUser}
-                isLoading={updateMutation.isPending}
-            />
         </div>
     );
 };

@@ -1,7 +1,44 @@
+import { useState } from 'react';
 import { SidebarLayout } from '@layouts/SidebarLayout';
-import { UsersTable } from '@features/users';
+import { UsersTable, UserModal } from '@features/users';
+import { useCreateUser, useUpdateUser } from '@features/users/hooks/useUsers';
 
 const UsersPage = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState(null);
+    const createUserMutation = useCreateUser();
+    const updateUserMutation = useUpdateUser();
+
+    const handleCreate = () => {
+        setEditingUser(null);
+        setIsModalOpen(true);
+    };
+
+    const handleEdit = (user) => {
+        setEditingUser(user);
+        setIsModalOpen(true);
+    };
+
+    const handleSaveUser = async (data) => {
+        if (editingUser) {
+            updateUserMutation.mutate(
+                { id: editingUser.id, data },
+                {
+                    onSuccess: () => {
+                        setIsModalOpen(false);
+                        setEditingUser(null);
+                    },
+                }
+            );
+        } else {
+            createUserMutation.mutate(data, {
+                onSuccess: () => {
+                    setIsModalOpen(false);
+                },
+            });
+        }
+    };
+
     return (
         <SidebarLayout>
             <div className="flex flex-col gap-6">
@@ -10,7 +47,10 @@ const UsersPage = () => {
                         <h3 className="text-2xl font-black text-[#111418] dark:text-white">Control de Acceso</h3>
                         <p className="text-[#617289] dark:text-[#a0aec0] mt-1">Gestione las cuentas de usuario y niveles de acceso de la plataforma de cumplimiento normativo.</p>
                     </div>
-                    <button className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-shadow shadow-sm active:scale-95">
+                    <button
+                        onClick={handleCreate}
+                        className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-shadow shadow-sm active:scale-95"
+                    >
                         <span className="material-symbols-outlined text-[20px]">person_add</span>
                         <span>Agregar Usuario</span>
                     </button>
@@ -35,7 +75,15 @@ const UsersPage = () => {
                     </div>
                 </div>
 
-                <UsersTable />
+                <UsersTable onEdit={handleEdit} />
+
+                <UserModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    user={editingUser}
+                    onSave={handleSaveUser}
+                    isLoading={createUserMutation.isPending || updateUserMutation.isPending}
+                />
             </div>
         </SidebarLayout>
     );
