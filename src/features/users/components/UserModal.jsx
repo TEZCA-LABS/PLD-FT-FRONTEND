@@ -6,7 +6,7 @@ import { Button, Input } from '@components/ui';
 
 const userSchema = z.object({
     email: z.string().email('Correo inválido'),
-    role: z.enum(['admin', 'analista', 'auditor', 'consultant'], {
+    role: z.enum(['admin', 'auditor', 'consultant', 'user'], {
         errorMap: () => ({ message: 'Rol inválido' }),
     }),
     is_active: z.boolean().optional(),
@@ -24,7 +24,7 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
         resolver: zodResolver(userSchema),
         defaultValues: {
             email: '',
-            role: 'analista',
+            role: 'user',
             is_active: true,
         },
     });
@@ -41,7 +41,7 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
         } else {
             reset({
                 email: '',
-                role: 'analista',
+                role: 'user',
                 is_active: true,
                 is_superuser: false,
                 password: '',
@@ -99,8 +99,8 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                             className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#243040] dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                             {...register('role')}
                         >
+                            <option value="user">Usuario (Analista)</option>
                             <option value="admin">Administrador</option>
-                            <option value="analista">Analista</option>
                             <option value="auditor">Auditor</option>
                             <option value="consultant">Consultor</option>
                         </select>

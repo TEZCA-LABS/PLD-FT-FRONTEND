@@ -8,6 +8,13 @@ export const UsersTable = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
 
+    const roleNames = {
+        admin: 'Administrador',
+        user: 'Analista',
+        auditor: 'Auditor',
+        consultant: 'Consultor',
+    };
+
     const handleEdit = (user) => {
         setEditingUser(user);
         setIsModalOpen(true);
@@ -65,7 +72,7 @@ export const UsersTable = () => {
                                         user.role === 'admin' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
                                             'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
                                         }`}>
-                                        {user.is_superuser ? 'SUPERUSER' : user.role ? user.role.toUpperCase() : 'USER'}
+                                        {user.is_superuser ? 'SUPERUSER' : (roleNames[user.role] || user.role || 'USER').toUpperCase()}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
