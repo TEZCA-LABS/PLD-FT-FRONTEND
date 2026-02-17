@@ -226,7 +226,7 @@ const MiPagina = () => {
 
 El proyecto incluye un feature completo de autenticación:
 
-- **Login**: `/login`
+- **Login**: `/secure-login`
 - **Registro**: `/register`
 - **Dashboard**: `/dashboard` (requiere autenticación)
 

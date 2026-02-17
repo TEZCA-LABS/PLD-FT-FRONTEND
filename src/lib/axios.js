@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { env } from '@config/env';
+import { useAuthStore } from '@stores/authStore';
 
 /**
  * Axios instance configured with base URL and interceptors
@@ -15,7 +16,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('authToken');
-        if (token) {
+        if (token && token !== 'undefined' && token !== 'null') {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
@@ -29,10 +30,13 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            // Unauthorized - clear token and redirect to login
-            localStorage.removeItem('authToken');
-            window.location.href = '/login';
+        const status = error.response?.status;
+        const detail = error.response?.data?.detail;
+
+        if (status === 401 || (status === 403 && detail === 'Could not validate credentials')) {
+            // Unauthorized or Invalid Credentials - clear token and redirect to login
+            useAuthStore.getState().logout();
+            window.location.href = '/secure-login';
         }
         return Promise.reject(error);
     }

@@ -18,7 +18,9 @@ export const useLogin = () => {
             const token = data.access_token;
 
             // Store token temporarily or let authApi handle it (it uses localStorage)
-            localStorage.setItem('authToken', token);
+            if (token) {
+                localStorage.setItem('authToken', token);
+            }
 
             try {
                 // Fetch current user details
