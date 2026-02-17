@@ -13,7 +13,7 @@
 
 export const routes = {
     secureLogin: '/secure-login',
-    dashboard: '/dashboard',
+
     search: '/search',
     users: '/users',
     roles: '/roles',

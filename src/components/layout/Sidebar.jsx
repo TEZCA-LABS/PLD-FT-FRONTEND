@@ -14,10 +14,7 @@ export const Sidebar = () => {
                     </div>
                 </div>
                 <nav className="flex flex-col gap-1">
-                    <Link className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" to="/dashboard">
-                        <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">dashboard</span>
-                        <span className="text-sm font-medium">Panel</span>
-                    </Link>
+
                     <Link className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" to="/search">
                         <span className="material-symbols-outlined text-[20px] fill-1">person_search</span>
                         <span className="text-sm font-bold">Búsqueda</span>

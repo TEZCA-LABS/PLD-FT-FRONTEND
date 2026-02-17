@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from '@pages/Dashboard';
+
 import SecureLoginPage from '@pages/SecureLoginPage';
 import SearchPage from '@pages/SearchPage';
 import UsersPage from '@pages/UsersPage';
@@ -11,8 +11,7 @@ import NotFound from '@pages/NotFound';
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<Navigate to="/secure-login" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/" element={<Navigate to="/search" replace />} />
             <Route path="/secure-login" element={<SecureLoginPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/users" element={<UsersPage />} />

@@ -31,8 +31,8 @@ export const useLogin = () => {
                 // Store auth data in Zustand store
                 setAuth(user, token);
 
-                // Redirect to dashboard
-                navigate('/dashboard');
+                // Redirect to search
+                navigate('/search');
             } catch (error) {
                 console.error('Failed to fetch user details after login:', error);
                 // Handle error (maybe clear token?)

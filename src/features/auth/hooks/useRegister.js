@@ -16,8 +16,8 @@ export const useRegister = () => {
         onSuccess: (data) => {
             // Store auth data in Zustand store
             setAuth(data.user, data.token);
-            // Redirect to dashboard
-            navigate('/dashboard');
+            // Redirect to search
+            navigate('/search');
         },
         onError: (error) => {
             console.error('Registration error:', error);

@@ -5,10 +5,7 @@ export const ChatSidebar = () => {
         <aside className="w-72 bg-white dark:bg-[#1a232e] border-r border-[#e2e8f0] dark:border-gray-700 flex flex-col shrink-0 z-10 hidden lg:flex">
             <div className="p-4 border-b border-[#e2e8f0] dark:border-gray-700 space-y-4">
                 <nav className="space-y-1">
-                    <Link to="/dashboard" className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#64748b] dark:text-gray-400 hover:bg-[#f8fafc] dark:hover:bg-gray-800 transition-colors text-sm font-medium">
-                        <span className="material-symbols-outlined text-xl">dashboard</span>
-                        Panel
-                    </Link>
+
                     <Link to="/search" className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[#64748b] dark:text-gray-400 hover:bg-[#f8fafc] dark:hover:bg-gray-800 transition-colors text-sm font-medium">
                         <span className="material-symbols-outlined text-xl">search</span>
                         Búsqueda

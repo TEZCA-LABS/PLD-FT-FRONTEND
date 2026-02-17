@@ -12,7 +12,7 @@ export const AuditorLayout = ({ children }) => {
                 </div>
                 <div className="flex flex-1 justify-end gap-8">
                     <nav className="flex items-center gap-9">
-                        <Link className="text-[#617289] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors" to="/dashboard">Panel</Link>
+
                         <Link className="text-primary text-sm font-bold leading-normal border-b-2 border-primary" to="/audit">Auditoría</Link>
                         <Link className="text-[#617289] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors" to="#">Reportes</Link>
                     </nav>
