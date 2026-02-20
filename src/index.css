@@ -23,9 +23,7 @@ body {
   @apply bg-white text-gray-900 font-sans antialiased;
 }
 
-
 @layer components {
-
   /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
