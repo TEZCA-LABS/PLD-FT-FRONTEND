@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { createUser, deleteUser, getUsers, updateUser } from '../api/usersApi';
 
 /**
@@ -8,7 +13,7 @@ export const useUsers = (params) => {
   return useQuery({
     queryKey: ['users', params],
     queryFn: () => getUsers(params),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -20,7 +25,7 @@ export const useCreateUser = () => {
   return useMutation({
     mutationFn: createUser,
     onSuccess: () => {
-      queryClient.invalidateQueries(['users']);
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 };
@@ -33,7 +38,7 @@ export const useUpdateUser = () => {
   return useMutation({
     mutationFn: ({ id, data }) => updateUser(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['users']);
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 };
@@ -46,7 +51,7 @@ export const useDeleteUser = () => {
   return useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
-      queryClient.invalidateQueries(['users']);
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 };

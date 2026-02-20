@@ -1,6 +1,7 @@
 import { Button, Input } from '@components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useMemo } from 'react';
+import { useCreateUser, useUpdateUser } from '@features/users/hooks/useUsers';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -17,12 +18,24 @@ const getSchema = (isEdit) =>
       : z.string().min(1, 'La contraseña es obligatoria para nuevos usuarios'),
     master_password: isEdit
       ? z.string().optional()
-      : z.string().min(1, 'La contraseña maestra es obligatoria'),
+      : z.string().optional(),
+  }).superRefine((data, ctx) => {
+    if (!isEdit && data.is_superuser && !data.master_password?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['master_password'],
+        message: 'La contraseña maestra es obligatoria para crear superusuarios',
+      });
+    }
   });
 
-export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
+export const UserModal = ({ isOpen, onClose, user }) => {
   const isEdit = !!user;
   const schema = useMemo(() => getSchema(isEdit), [isEdit]);
+  const createUserMutation = useCreateUser();
+  const updateUserMutation = useUpdateUser();
+  const isLoading = createUserMutation.isPending || updateUserMutation.isPending;
+  const [feedback, setFeedback] = useState(null);
 
   const {
     register,
@@ -61,11 +74,14 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
         master_password: '',
       });
     }
+    setFeedback(null);
   }, [user, reset]);
 
   if (!isOpen) return null;
 
   const onSubmit = (data) => {
+    setFeedback(null);
+
     // Remove password/master_password if empty string to avoid sending it
     const finalData = { ...data };
     if (finalData.password === '') {
@@ -74,7 +90,50 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
     if (finalData.master_password === '') {
       delete finalData.master_password;
     }
-    onSave(finalData);
+
+    if (isEdit) {
+      delete finalData.email;
+      delete finalData.master_password;
+      updateUserMutation.mutate(
+        { id: user.id, data: finalData },
+        {
+          onSuccess: () => {
+            setFeedback({ type: 'success', message: 'Usuario actualizado correctamente.' });
+            onClose();
+          },
+          onError: (error) => {
+            const apiMessage =
+              error?.response?.data?.detail ||
+              error?.response?.data?.message ||
+              'No se pudo actualizar el usuario.';
+            setFeedback({ type: 'error', message: apiMessage });
+          },
+        },
+      );
+      return;
+    }
+
+    createUserMutation.mutate(finalData, {
+      onSuccess: () => {
+        setFeedback({ type: 'success', message: 'Usuario creado correctamente.' });
+        onClose();
+      },
+      onError: (error) => {
+        const apiMessage =
+          error?.response?.data?.detail ||
+          error?.response?.data?.message ||
+          'No se pudo crear el usuario.';
+        setFeedback({ type: 'error', message: apiMessage });
+      },
+    });
+  };
+
+  const onInvalid = () => {
+    setFeedback({
+      type: 'error',
+      message:
+        'Formulario inválido. Revisa correo, contraseña y contraseña maestra.',
+    });
   };
 
   return (
@@ -92,7 +151,7 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="p-6 space-y-4">
           <Input
             label="Correo Electrónico"
             type="email"
@@ -180,6 +239,18 @@ export const UserModal = ({ isOpen, onClose, user, onSave, isLoading }) => {
                 {...register('master_password')}
                 className="dark:bg-[#243040] dark:text-white dark:border-gray-600"
               />
+            </div>
+          )}
+
+          {feedback && (
+            <div
+              className={`rounded-lg px-3 py-2 text-sm font-medium ${
+                feedback.type === 'error'
+                  ? 'bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-300'
+                  : 'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300'
+              }`}
+            >
+              {feedback.message}
             </div>
           )}
 

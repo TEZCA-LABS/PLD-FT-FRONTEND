@@ -1,13 +1,10 @@
 import { UserModal, UsersTable } from '@features/users';
-import { useCreateUser, useUpdateUser } from '@features/users/hooks/useUsers';
 import { SidebarLayout } from '@layouts/SidebarLayout';
 import { useState } from 'react';
 
 const UsersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const createUserMutation = useCreateUser();
-  const updateUserMutation = useUpdateUser();
 
   const handleCreate = () => {
     setEditingUser(null);
@@ -19,24 +16,9 @@ const UsersPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleSaveUser = async (data) => {
-    if (editingUser) {
-      updateUserMutation.mutate(
-        { id: editingUser.id, data },
-        {
-          onSuccess: () => {
-            setIsModalOpen(false);
-            setEditingUser(null);
-          },
-        },
-      );
-    } else {
-      createUserMutation.mutate(data, {
-        onSuccess: () => {
-          setIsModalOpen(false);
-        },
-      });
-    }
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingUser(null);
   };
 
   return (
@@ -92,12 +74,8 @@ const UsersPage = () => {
 
         <UserModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={handleCloseModal}
           user={editingUser}
-          onSave={handleSaveUser}
-          isLoading={
-            createUserMutation.isPending || updateUserMutation.isPending
-          }
         />
       </div>
     </SidebarLayout>
