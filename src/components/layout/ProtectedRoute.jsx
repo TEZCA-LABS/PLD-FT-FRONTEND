@@ -1,14 +1,14 @@
-import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@stores/authStore';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export const ProtectedRoute = ({ children }) => {
-    const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-    const location = useLocation();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const location = useLocation();
 
-    if (!isAuthenticated) {
-        // Redirect to login page with the return url
-        return <Navigate to="/secure-login" state={{ from: location }} replace />;
-    }
+  if (!isAuthenticated) {
+    // Redirect to login page with the return url
+    return <Navigate to="/secure-login" state={{ from: location }} replace />;
+  }
 
-    return children;
+  return children;
 };

@@ -11,10 +11,10 @@ import apiClient from '@lib/axios';
  * @returns {Promise} Search results
  */
 export const searchSanctions = async (query, limit = 10) => {
-    const response = await apiClient.get('/search/sanctions', {
-        params: { q: query, limit }
-    });
-    return response.data;
+  const response = await apiClient.get('/search/sanctions', {
+    params: { q: query, limit },
+  });
+  return response.data;
 };
 
 /**
@@ -23,13 +23,13 @@ export const searchSanctions = async (query, limit = 10) => {
  * @returns {Promise} Upload result
  */
 export const uploadSanctionsXml = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
+  const formData = new FormData();
+  formData.append('file', file);
 
-    const response = await apiClient.post('/sanctions/upload-xml', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    });
-    return response.data;
+  const response = await apiClient.post('/sanctions/upload-xml', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
 };

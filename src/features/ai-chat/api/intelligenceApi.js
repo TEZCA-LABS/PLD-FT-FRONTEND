@@ -10,6 +10,8 @@ import apiClient from '@lib/axios';
  * @returns {Promise} Analysis result
  */
 export const analyzeEntity = async (query) => {
-    const response = await apiClient.post('/intelligence/analyze-entity', { query });
-    return response.data;
+  const response = await apiClient.post('/intelligence/analyze-entity', {
+    query,
+  });
+  return response.data;
 };

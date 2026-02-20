@@ -5,7 +5,7 @@ import { analyzeEntity } from '../api/intelligenceApi';
  * Hook to analyze entity
  */
 export const useAnalyzeEntity = () => {
-    return useMutation({
-        mutationFn: analyzeEntity,
-    });
+  return useMutation({
+    mutationFn: analyzeEntity,
+  });
 };

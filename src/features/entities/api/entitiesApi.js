@@ -10,8 +10,8 @@ import apiClient from '@lib/axios';
  * @returns {Promise} List of entities
  */
 export const getEntities = async (params) => {
-    const response = await apiClient.get('/entities/', { params });
-    return response.data;
+  const response = await apiClient.get('/entities/', { params });
+  return response.data;
 };
 
 /**
@@ -20,6 +20,6 @@ export const getEntities = async (params) => {
  * @returns {Promise} Created entity
  */
 export const createEntity = async (entityData) => {
-    const response = await apiClient.post('/entities/', entityData);
-    return response.data;
+  const response = await apiClient.post('/entities/', entityData);
+  return response.data;
 };

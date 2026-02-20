@@ -10,10 +10,10 @@
  * @returns {string} Formatted currency string
  */
 export const formatCurrency = (amount, currency = 'USD') => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency,
-    }).format(amount);
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+  }).format(amount);
 };
 
 /**
@@ -23,11 +23,11 @@ export const formatCurrency = (amount, currency = 'USD') => {
  * @returns {string} Formatted date string
  */
 export const formatDate = (date, locale = 'es-ES') => {
-    return new Intl.DateTimeFormat(locale, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    }).format(new Date(date));
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(date));
 };
 
 /**
@@ -37,13 +37,13 @@ export const formatDate = (date, locale = 'es-ES') => {
  * @returns {string} Formatted date and time string
  */
 export const formatDateTime = (date, locale = 'es-ES') => {
-    return new Intl.DateTimeFormat(locale, {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    }).format(new Date(date));
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date));
 };
 
 /**
@@ -52,8 +52,8 @@ export const formatDateTime = (date, locale = 'es-ES') => {
  * @returns {string} Capitalized string
  */
 export const capitalize = (str) => {
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
 /**
@@ -63,6 +63,6 @@ export const capitalize = (str) => {
  * @returns {string} Truncated text
  */
 export const truncate = (text, maxLength = 50) => {
-    if (!text || text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + '...';
+  if (!text || text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + '...';
 };

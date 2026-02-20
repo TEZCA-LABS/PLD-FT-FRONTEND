@@ -10,6 +10,6 @@ import apiClient from '@lib/axios';
  * @returns {Promise} List of audit logs
  */
 export const getAuditHistory = async (params) => {
-    const response = await apiClient.get('/audit/history', { params });
-    return response.data;
+  const response = await apiClient.get('/audit/history', { params });
+  return response.data;
 };

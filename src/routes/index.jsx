@@ -12,11 +12,11 @@
 // - Nested routes
 
 export const routes = {
-    secureLogin: '/secure-login',
+  secureLogin: '/secure-login',
 
-    search: '/search',
-    users: '/users',
-    roles: '/roles',
-    audit: '/audit',
-    aiChat: '/ai-chat',
+  search: '/search',
+  users: '/users',
+  roles: '/roles',
+  audit: '/audit',
+  aiChat: '/ai-chat',
 };

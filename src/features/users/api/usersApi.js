@@ -10,8 +10,8 @@ import apiClient from '@lib/axios';
  * @returns {Promise} List of users
  */
 export const getUsers = async (params = { skip: 0, limit: 100 }) => {
-    const response = await apiClient.get('/users/', { params });
-    return response.data;
+  const response = await apiClient.get('/users/', { params });
+  return response.data;
 };
 
 /**
@@ -20,8 +20,8 @@ export const getUsers = async (params = { skip: 0, limit: 100 }) => {
  * @returns {Promise} Created user
  */
 export const createUser = async (userData) => {
-    const response = await apiClient.post('/users/', userData);
-    return response.data;
+  const response = await apiClient.post('/users/', userData);
+  return response.data;
 };
 
 /**
@@ -30,8 +30,8 @@ export const createUser = async (userData) => {
  * @returns {Promise} User data
  */
 export const getUserById = async (userId) => {
-    const response = await apiClient.get(`/users/${userId}`);
-    return response.data;
+  const response = await apiClient.get(`/users/${userId}`);
+  return response.data;
 };
 
 /**
@@ -41,8 +41,8 @@ export const getUserById = async (userId) => {
  * @returns {Promise} Updated user
  */
 export const updateUser = async (userId, updateData) => {
-    const response = await apiClient.put(`/users/${userId}`, updateData);
-    return response.data;
+  const response = await apiClient.put(`/users/${userId}`, updateData);
+  return response.data;
 };
 
 /**
@@ -51,6 +51,6 @@ export const updateUser = async (userId, updateData) => {
  * @returns {Promise} Deleted user
  */
 export const deleteUser = async (userId) => {
-    const response = await apiClient.delete(`/users/${userId}`);
-    return response.data;
+  const response = await apiClient.delete(`/users/${userId}`);
+  return response.data;
 };

@@ -10,16 +10,16 @@ import apiClient from '@lib/axios';
  * @returns {Promise} User data and token
  */
 export const login = async (credentials) => {
-    const formData = new URLSearchParams();
-    formData.append('username', credentials.email);
-    formData.append('password', credentials.password);
+  const formData = new URLSearchParams();
+  formData.append('username', credentials.email);
+  formData.append('password', credentials.password);
 
-    const response = await apiClient.post('/auth/login/access-token', formData, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-    });
-    return response.data;
+  const response = await apiClient.post('/auth/login/access-token', formData, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  });
+  return response.data;
 };
 
 /**
@@ -28,8 +28,8 @@ export const login = async (credentials) => {
  * @returns {Promise} User data and token
  */
 export const register = async (userData) => {
-    const response = await apiClient.post('/auth/register', userData);
-    return response.data;
+  const response = await apiClient.post('/auth/register', userData);
+  return response.data;
 };
 
 /**
@@ -37,8 +37,8 @@ export const register = async (userData) => {
  * @returns {Promise} Logout confirmation
  */
 export const logout = async () => {
-    const response = await apiClient.post('/auth/logout');
-    return response.data;
+  const response = await apiClient.post('/auth/logout');
+  return response.data;
 };
 
 /**
@@ -46,6 +46,6 @@ export const logout = async () => {
  * @returns {Promise} Current user data
  */
 export const getCurrentUser = async () => {
-    const response = await apiClient.get('/auth/me');
-    return response.data;
+  const response = await apiClient.get('/auth/me');
+  return response.data;
 };

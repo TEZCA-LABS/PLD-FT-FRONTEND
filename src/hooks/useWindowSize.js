@@ -1,31 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Hook for tracking window size
  * @returns {object} Window width and height
  */
 export const useWindowSize = () => {
-    const [windowSize, setWindowSize] = useState({
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
-    });
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowSize({
-                width: window.innerWidth,
-                height: window.innerHeight,
-            });
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    return {
-        ...windowSize,
-        isMobile: windowSize.width < 768,
-        isTablet: windowSize.width >= 768 && windowSize.width < 1024,
-        isDesktop: windowSize.width >= 1024,
+      });
     };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return {
+    ...windowSize,
+    isMobile: windowSize.width < 768,
+    isTablet: windowSize.width >= 768 && windowSize.width < 1024,
+    isDesktop: windowSize.width >= 1024,
+  };
 };
