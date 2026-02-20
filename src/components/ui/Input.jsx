@@ -3,15 +3,14 @@
  * Reusable input field with error states
  */
 
-export const Input = ({
-  label,
-  error,
-  type = 'text',
-  className = '',
-  id,
-  ...props
-}) => {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+import { forwardRef, useId } from 'react';
+
+export const Input = forwardRef(function Input(
+  { label, error, type = 'text', className = '', id, ...props },
+  ref,
+) {
+  const generatedId = useId();
+  const inputId = id || generatedId;
 
   return (
     <div className="w-full">
@@ -24,6 +23,7 @@ export const Input = ({
         </label>
       )}
       <input
+        ref={ref}
         id={inputId}
         type={type}
         className={`
@@ -43,4 +43,4 @@ export const Input = ({
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
-};
+});
