@@ -126,7 +126,7 @@ export const RegisterForm = () => {
         {isError && (
           <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <p className="text-sm text-red-600 dark:text-red-400">
-              {error?.response?.data?.message ||
+              {error?.response?.data?.detail ||
                 'Error al registrarse. Intenta de nuevo.'}
             </p>
           </div>
@@ -147,7 +147,7 @@ export const RegisterForm = () => {
       <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
         ¿Ya tienes cuenta?{' '}
         <Link
-          to="/login"
+          to="/secure-login"
           className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
         >
           Inicia sesión aquí
