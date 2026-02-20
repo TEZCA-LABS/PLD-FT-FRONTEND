@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { getApiErrorMessage } from '@utils/apiError';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../api/authApi';
 
@@ -15,7 +16,10 @@ export const useRegister = () => {
       navigate('/secure-login');
     },
     onError: (error) => {
-      console.error('Registration error:', error?.response?.data?.detail || error.message);
+      console.error(
+        'Registration error:',
+        getApiErrorMessage(error, 'Error al registrar usuario.'),
+      );
     },
   });
 };
