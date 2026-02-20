@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { searchSanctions, uploadSanctionsXml } from '../api/searchApi';
 
 /**
@@ -9,7 +9,7 @@ export const useSearchSanctions = (query) => {
     queryKey: ['searchSanctions', query],
     queryFn: () => searchSanctions(query),
     enabled: !!query && query.length >= 2, // Only run if query is valid
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 };
 
