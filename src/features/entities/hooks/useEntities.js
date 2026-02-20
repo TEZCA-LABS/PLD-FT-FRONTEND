@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { createEntity, getEntities } from '../api/entitiesApi';
 
 /**
@@ -8,7 +13,7 @@ export const useEntities = (params) => {
   return useQuery({
     queryKey: ['entities', params],
     queryFn: () => getEntities(params),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 };
 
@@ -20,7 +25,7 @@ export const useCreateEntity = () => {
   return useMutation({
     mutationFn: createEntity,
     onSuccess: () => {
-      queryClient.invalidateQueries(['entities']);
+      queryClient.invalidateQueries({ queryKey: ['entities'] });
     },
   });
 };

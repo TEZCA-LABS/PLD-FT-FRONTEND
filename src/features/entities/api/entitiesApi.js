@@ -10,7 +10,13 @@ import apiClient from '@lib/axios';
  * @returns {Promise} List of entities
  */
 export const getEntities = async (params) => {
-  const response = await apiClient.get('/entities/', { params });
+  const response = await apiClient.get('/entities/', {
+    params: {
+      skip: 0,
+      limit: 100,
+      ...params,
+    },
+  });
   return response.data;
 };
 
