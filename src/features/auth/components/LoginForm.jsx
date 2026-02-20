@@ -1,4 +1,5 @@
 import { Button, Card, Input, Spinner } from '@components/ui';
+import { getApiErrorMessage } from '@utils/apiError';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLogin } from '../hooks/useLogin';
@@ -65,8 +66,10 @@ export const LoginForm = () => {
         {isError && (
           <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <p className="text-sm text-red-600 dark:text-red-400">
-              {error?.response?.data?.detail ||
-                'Error al iniciar sesión. Verifica tus credenciales.'}
+              {getApiErrorMessage(
+                error,
+                'Error al iniciar sesión. Verifica tus credenciales.',
+              )}
             </p>
           </div>
         )}

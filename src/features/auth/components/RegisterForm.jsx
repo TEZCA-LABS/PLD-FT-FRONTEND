@@ -1,4 +1,5 @@
 import { Button, Card, Input, Spinner } from '@components/ui';
+import { getApiErrorMessage } from '@utils/apiError';
 import { isValidEmail } from '@utils/validators';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -126,8 +127,7 @@ export const RegisterForm = () => {
         {isError && (
           <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <p className="text-sm text-red-600 dark:text-red-400">
-              {error?.response?.data?.detail ||
-                'Error al registrarse. Intenta de nuevo.'}
+              {getApiErrorMessage(error, 'Error al registrarse. Intenta de nuevo.')}
             </p>
           </div>
         )}

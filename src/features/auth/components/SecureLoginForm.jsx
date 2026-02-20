@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getApiErrorMessage } from '@utils/apiError';
 
 import { useLogin } from '../hooks/useLogin';
 
@@ -55,8 +56,10 @@ export const SecureLoginForm = () => {
                   Error de Autenticación
                 </p>
                 <p className="text-sm text-red-600 mt-1">
-                  {error?.response?.data?.detail ||
-                    'No se pudo iniciar sesión. Verifique sus credenciales.'}
+                  {getApiErrorMessage(
+                    error,
+                    'No se pudo iniciar sesión. Verifique sus credenciales.',
+                  )}
                 </p>
               </div>
             </div>

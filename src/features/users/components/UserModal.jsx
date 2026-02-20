@@ -1,6 +1,7 @@
 import { Button, Input } from '@components/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateUser, useUpdateUser } from '@features/users/hooks/useUsers';
+import { getApiErrorMessage } from '@utils/apiError';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -102,10 +103,10 @@ export const UserModal = ({ isOpen, onClose, user }) => {
             onClose();
           },
           onError: (error) => {
-            const apiMessage =
-              error?.response?.data?.detail ||
-              error?.response?.data?.message ||
-              'No se pudo actualizar el usuario.';
+            const apiMessage = getApiErrorMessage(
+              error,
+              'No se pudo actualizar el usuario.',
+            );
             setFeedback({ type: 'error', message: apiMessage });
           },
         },
@@ -119,10 +120,10 @@ export const UserModal = ({ isOpen, onClose, user }) => {
         onClose();
       },
       onError: (error) => {
-        const apiMessage =
-          error?.response?.data?.detail ||
-          error?.response?.data?.message ||
-          'No se pudo crear el usuario.';
+        const apiMessage = getApiErrorMessage(
+          error,
+          'No se pudo crear el usuario.',
+        );
         setFeedback({ type: 'error', message: apiMessage });
       },
     });
