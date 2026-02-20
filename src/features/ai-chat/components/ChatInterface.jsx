@@ -1,62 +1,22 @@
 import React from 'react';
-import { useAnalyzeEntity } from '../hooks/useIntelligence';
 
-export const ChatInterface = () => {
-  const [messages, setMessages] = React.useState([
-    {
-      role: 'assistant',
-      content:
-        'Hola, soy tu asistente de inteligencia de riesgos. Puedo analizar entidades, resumir perfiles de riesgo o redactar informes. ¿En qué puedo ayudarte hoy?',
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    },
-  ]);
-  const [input, setInput] = React.useState('');
-  const { mutate: analyze, isPending } = useAnalyzeEntity();
+export const ChatInterface = ({
+  messages,
+  input,
+  onInputChange,
+  onSend,
+  isPending,
+}) => {
+  const containerRef = React.useRef(null);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-
-    const userMsg = {
-      role: 'user',
-      content: input,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    };
-
-    setMessages((prev) => [...prev, userMsg]);
-    const query = input;
-    setInput('');
-
-    analyze(query, {
-      onSuccess: (data) => {
-        const aiMsg = {
-          role: 'assistant',
-          content: data.analysis,
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        };
-        setMessages((prev) => [...prev, aiMsg]);
-      },
-      onError: () => {
-        const errorMsg = {
-          role: 'assistant',
-          content: 'Lo siento, hubo un error al procesar tu solicitud.',
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        };
-        setMessages((prev) => [...prev, errorMsg]);
-      },
+  React.useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.scrollTo({
+      top: container.scrollHeight,
+      behavior: 'smooth',
     });
-  };
+  }, [messages, isPending]);
 
   return (
     <main className="flex-1 flex flex-col relative bg-[#f8fafc] dark:bg-background-dark min-w-0">
@@ -77,6 +37,7 @@ export const ChatInterface = () => {
       </div>
 
       <div
+        ref={containerRef}
         className="flex-1 overflow-y-auto custom-scrollbar px-6 py-6 pb-32 space-y-8 scroll-smooth"
         id="chat-container"
       >
@@ -161,11 +122,11 @@ export const ChatInterface = () => {
               placeholder="Escribe tu consulta aquí..."
               rows="2"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => onInputChange(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleSend();
+                  onSend();
                 }
               }}
             ></textarea>
@@ -187,7 +148,7 @@ export const ChatInterface = () => {
                 </button>
               </div>
               <button
-                onClick={handleSend}
+                onClick={onSend}
                 disabled={isPending || !input.trim()}
                 className="bg-primary hover:bg-[#2c5c9e] text-white rounded-lg p-2 pr-4 pl-4 flex items-center gap-2 text-sm font-bold shadow-sm transition-all transform active:scale-95 disabled:opacity-50 disabled:scale-100"
               >
