@@ -1,4 +1,3 @@
-import { useAuthStore } from '@stores/authStore';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../api/authApi';
@@ -9,18 +8,14 @@ import { register } from '../api/authApi';
  */
 export const useRegister = () => {
   const navigate = useNavigate();
-  const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation({
     mutationFn: register,
-    onSuccess: (data) => {
-      // Store auth data in Zustand store
-      setAuth(data.user, data.token);
-      // Redirect to search
-      navigate('/search');
+    onSuccess: () => {
+      navigate('/secure-login');
     },
     onError: (error) => {
-      console.error('Registration error:', error);
+      console.error('Registration error:', error?.response?.data?.detail || error.message);
     },
   });
 };

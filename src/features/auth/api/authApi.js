@@ -28,7 +28,15 @@ export const login = async (credentials) => {
  * @returns {Promise} User data and token
  */
 export const register = async (userData) => {
-  const response = await apiClient.post('/auth/register', userData);
+  const payload = {
+    email: userData.email,
+    password: userData.password,
+    is_active: true,
+    is_superuser: false,
+    role: 'user',
+  };
+
+  const response = await apiClient.post('/users/', payload);
   return response.data;
 };
 
@@ -37,8 +45,7 @@ export const register = async (userData) => {
  * @returns {Promise} Logout confirmation
  */
 export const logout = async () => {
-  const response = await apiClient.post('/auth/logout');
-  return response.data;
+  return { success: true };
 };
 
 /**
