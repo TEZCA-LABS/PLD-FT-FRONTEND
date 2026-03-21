@@ -6,46 +6,17 @@ import {
   ChatSidebar,
   ContextSidebar,
 } from '@features/ai-chat';
-import { useAnalyzeEntity } from '@features/ai-chat/hooks/useIntelligence';
+import {
+  useAttachments,
+  useCreateSession,
+  useExportSession,
+  useMessages,
+  useSendMessage,
+  useSessions,
+  useUploadAttachment,
+} from '@features/ai-chat/hooks/useIntelligence';
+import { useRecordAiEvent } from '@features/audit/hooks/useAudit';
 import { SidebarLayout } from '@layouts/SidebarLayout';
-
-const CHAT_STORAGE_KEY = 'pld-ai-chat-sessions-v1';
-
-const getCurrentTime = () =>
-  new Date().toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
-const getCurrentIsoDate = () => new Date().toISOString();
-
-const createMessage = (role, content) => ({
-  id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-  role,
-  content,
-  timestamp: getCurrentTime(),
-});
-
-const createWelcomeMessage = () =>
-  createMessage(
-    'assistant',
-    'Hola, soy tu asistente de inteligencia de riesgos. Puedo analizar entidades, resumir perfiles de riesgo o redactar informes. ¿En qué puedo ayudarte hoy?',
-  );
-
-const createEmptySession = () => {
-  const nowIso = getCurrentIsoDate();
-  return {
-    id: `session-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    title: 'Nueva investigación',
-    status: 'Lista para analizar',
-    updatedAt: nowIso,
-    messages: [createWelcomeMessage()],
-    context: {
-      source: null,
-      relatedEntities: [],
-    },
-  };
-};
 
 const deriveSessionTitle = (query) => {
   const normalized = String(query || '').trim();
@@ -53,6 +24,16 @@ const deriveSessionTitle = (query) => {
   return normalized.length > 48
     ? `${normalized.slice(0, 48).trim()}...`
     : normalized;
+};
+
+const formatTime = (value) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '--:--';
+
+  return date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 
 const mapRelatedEntities = (entities) => {
@@ -69,261 +50,256 @@ const mapRelatedEntities = (entities) => {
 
     return {
       name: item?.name || item?.entity_name || `Entidad ${index + 1}`,
-      relation: item?.relationship || item?.role || 'Entidad relacionada',
+      relation: item?.relationship || item?.relation || item?.role || 'Entidad relacionada',
       type: item?.type || 'domain',
     };
   });
 };
 
-const normalizeAnalysisResponse = (data) => {
-  const analysis = [data?.analysis, data?.answer, data?.response, data?.message].find(
-    (candidate) => typeof candidate === 'string' && candidate.trim().length > 0,
-  );
-
-  const sourceRaw =
-    data?.context?.source ||
-    data?.source ||
-    data?.citation ||
-    (Array.isArray(data?.sources) ? data.sources[0] : null);
-
-  const source = sourceRaw
-    ? {
-        name: sourceRaw?.title || sourceRaw?.name || 'Fuente referenciada',
-        organization:
-          sourceRaw?.publisher ||
-          sourceRaw?.organization ||
-          sourceRaw?.source ||
-          'Fuente externa',
-        date: sourceRaw?.date || getCurrentIsoDate(),
-        snippet:
-          sourceRaw?.snippet ||
-          sourceRaw?.extract ||
-          sourceRaw?.match ||
-          String(analysis || '').slice(0, 180),
-        url: sourceRaw?.url || sourceRaw?.link || null,
-      }
-    : null;
-
-  const relatedEntities = mapRelatedEntities(
-    data?.context?.relatedEntities || data?.related_entities || data?.entities,
-  );
+const mapContext = (context) => {
+  if (!context) return { source: null, relatedEntities: [] };
 
   return {
-    analysis:
-      analysis ||
-      'El análisis se completó, pero no se recibió contenido textual en la respuesta.',
-    context: {
-      source,
-      relatedEntities,
-    },
+    source: context.source
+      ? {
+          name: context.source.name || 'Fuente referenciada',
+          organization: context.source.organization || 'Fuente externa',
+          date: context.source.date || null,
+          snippet: context.source.snippet || null,
+          url: context.source.url || null,
+        }
+      : null,
+    relatedEntities: mapRelatedEntities(context.related_entities || context.relatedEntities),
   };
-};
-
-const loadStoredSessions = () => {
-  try {
-    const stored = localStorage.getItem(CHAT_STORAGE_KEY);
-    if (!stored) {
-      const initialSession = createEmptySession();
-      return {
-        sessions: [initialSession],
-        activeSessionId: initialSession.id,
-      };
-    }
-
-    const parsed = JSON.parse(stored);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      const initialSession = createEmptySession();
-      return {
-        sessions: [initialSession],
-        activeSessionId: initialSession.id,
-      };
-    }
-
-    const sessions = parsed.map((session) => ({
-      ...session,
-      messages: Array.isArray(session?.messages) ? session.messages : [],
-      context: session?.context || { source: null, relatedEntities: [] },
-    }));
-
-    return {
-      sessions,
-      activeSessionId: sessions[0].id,
-    };
-  } catch {
-    const initialSession = createEmptySession();
-    return {
-      sessions: [initialSession],
-      activeSessionId: initialSession.id,
-    };
-  }
 };
 
 const AIChatPage = () => {
-  const initialState = React.useMemo(() => loadStoredSessions(), []);
-  const [sessions, setSessions] = React.useState(initialState.sessions);
-  const [activeSessionId, setActiveSessionId] = React.useState(
-    initialState.activeSessionId,
-  );
+  const [activeSessionId, setActiveSessionId] = React.useState(null);
   const [input, setInput] = React.useState('');
-  const [pendingSessionId, setPendingSessionId] = React.useState(null);
-  const { mutate: analyze, isPending } = useAnalyzeEntity();
+  const [feedback, setFeedback] = React.useState(null);
 
-  React.useEffect(() => {
-    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(sessions));
-  }, [sessions]);
+  const sessionsQuery = useSessions({ skip: 0, limit: 20 });
+  const sessions = React.useMemo(
+    () =>
+      (sessionsQuery.data?.items || []).map((session) => ({
+        id: session.id,
+        title: session.title,
+        status: session.status,
+        updatedAt: session.updated_at,
+      })),
+    [sessionsQuery.data],
+  );
 
   const activeSession = React.useMemo(
-    () => sessions.find((session) => session.id === activeSessionId) || sessions[0],
+    () => sessions.find((session) => session.id === activeSessionId) || null,
     [sessions, activeSessionId],
   );
 
+  const messagesQuery = useMessages(activeSessionId, { skip: 0, limit: 200 });
+  const messages = React.useMemo(
+    () =>
+      (messagesQuery.data?.items || []).map((message) => ({
+        id: message.id,
+        role: message.role,
+        content: message.content,
+        timestamp: formatTime(message.created_at),
+        context: mapContext(message.context),
+      })),
+    [messagesQuery.data],
+  );
+
+  const attachmentsQuery = useAttachments(activeSessionId, { skip: 0, limit: 10 });
+  const attachments = attachmentsQuery.data?.items || [];
+
+  const activeContext = React.useMemo(() => {
+    for (let index = messages.length - 1; index >= 0; index -= 1) {
+      const message = messages[index];
+      if (message.role === 'assistant' && message.context) {
+        return message.context;
+      }
+    }
+
+    return { source: null, relatedEntities: [] };
+  }, [messages]);
+
+  const { mutate: createSession, isPending: isCreatingSession } =
+    useCreateSession();
+  const { mutate: sendMessage, isPending: isSendingMessage } = useSendMessage();
+  const { mutate: uploadAttachment, isPending: isUploadingAttachment } =
+    useUploadAttachment();
+  const { mutateAsync: exportSession, isPending: isExporting } = useExportSession();
+  const { mutate: recordAiEvent } = useRecordAiEvent();
+
   React.useEffect(() => {
-    if (!activeSession && sessions.length > 0) {
+    if (!activeSessionId && sessions.length > 0) {
       setActiveSessionId(sessions[0].id);
     }
-  }, [activeSession, sessions]);
-
-  const updateSessionById = React.useCallback((sessionId, updater) => {
-    setSessions((previousSessions) =>
-      previousSessions.map((session) =>
-        session.id === sessionId ? updater(session) : session,
-      ),
-    );
-  }, []);
+  }, [activeSessionId, sessions]);
 
   const handleCreateSession = () => {
-    const nextSession = createEmptySession();
-    setSessions((previousSessions) => [nextSession, ...previousSessions]);
-    setActiveSessionId(nextSession.id);
-    setInput('');
+    const title = deriveSessionTitle(input || 'Nueva investigación');
+    setFeedback(null);
+
+    createSession(
+      {
+        title,
+        initial_context: null,
+      },
+      {
+        onSuccess: (createdSession) => {
+          setActiveSessionId(createdSession.id);
+          setInput('');
+        },
+        onError: (error) => {
+          setFeedback(getApiErrorMessage(error, 'No fue posible crear la sesion.'));
+        },
+      },
+    );
   };
 
-  const handleExportCase = () => {
-    if (!activeSession?.messages?.length) return;
+  const handleExportCase = async () => {
+    if (!activeSessionId) return;
 
-    const header = [
-      `Caso: ${activeSession.title}`,
-      `Actualizado: ${new Date(activeSession.updatedAt).toLocaleString()}`,
-      '',
-      '--- Conversación ---',
-    ];
+    try {
+      const data = await exportSession({
+        sessionId: activeSessionId,
+        options: {
+          format: 'pdf',
+          include: ['messages', 'sources', 'entities', 'metadata'],
+        },
+      });
 
-    const conversation = activeSession.messages.map(
-      (message) =>
-        `[${message.timestamp}] ${message.role === 'user' ? 'Tú' : 'Asistente'}: ${message.content}`,
-    );
+      const blob = data instanceof Blob ? data : new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const extension = data instanceof Blob ? 'pdf' : 'json';
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${activeSession?.title?.replace(/\s+/g, '-').toLowerCase() || 'caso-ai-chat'}.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(downloadUrl);
 
-    const sourceSection = activeSession.context?.source
-      ? [
-          '',
-          '--- Fuente seleccionada ---',
-          `Título: ${activeSession.context.source.name}`,
-          `Organización: ${activeSession.context.source.organization}`,
-          `Fecha: ${new Date(activeSession.context.source.date).toLocaleDateString()}`,
-          `Detalle: ${activeSession.context.source.snippet}`,
-          activeSession.context.source.url
-            ? `URL: ${activeSession.context.source.url}`
-            : null,
-        ].filter(Boolean)
-      : [];
-
-    const fileContent = [...header, ...conversation, ...sourceSection].join('\n');
-    const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-    const downloadUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = `${activeSession.title.replace(/\s+/g, '-').toLowerCase() || 'caso-ai-chat'}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(downloadUrl);
+      recordAiEvent({
+        session_id: activeSessionId,
+        event_type: 'case_exported',
+        metadata: { format: extension },
+      });
+    } catch (error) {
+      setFeedback(getApiErrorMessage(error, 'No fue posible exportar el expediente.'));
+    }
   };
 
   const handleSend = () => {
-    const query = input.trim();
-    if (!query || !activeSessionId || isPending) return;
+    const query = String(input || '').trim();
+    if (!query || !activeSessionId || isSendingMessage) return;
 
-    const sessionId = activeSessionId;
-    const userMessage = createMessage('user', query);
+    setFeedback(null);
     setInput('');
-    setPendingSessionId(sessionId);
 
-    updateSessionById(sessionId, (session) => ({
-      ...session,
-      title:
-        session.title === 'Nueva investigación'
-          ? deriveSessionTitle(query)
-          : session.title,
-      status: 'Procesando consulta...',
-      updatedAt: getCurrentIsoDate(),
-      messages: [...session.messages, userMessage],
-    }));
-
-    analyze(query, {
-      onSuccess: (data) => {
-        const normalized = normalizeAnalysisResponse(data);
-        const assistantMessage = createMessage('assistant', normalized.analysis);
-
-        updateSessionById(sessionId, (session) => ({
-          ...session,
-          status: 'Análisis completado',
-          updatedAt: getCurrentIsoDate(),
-          messages: [...session.messages, assistantMessage],
-          context: {
-            source: normalized.context.source || session.context?.source || null,
-            relatedEntities:
-              normalized.context.relatedEntities.length > 0
-                ? normalized.context.relatedEntities
-                : session.context?.relatedEntities || [],
+    sendMessage(
+      {
+        sessionId: activeSessionId,
+        messageData: {
+          query,
+          options: {
+            redact_pii: true,
           },
-        }));
+        },
+      },
+      {
+        onSuccess: (result) => {
+          recordAiEvent({
+            session_id: activeSessionId,
+            event_type: 'analysis_generated',
+            metadata: {
+              message_id: result?.message_id || null,
+              model: result?.model_version || 'unknown',
+            },
+          });
       },
       onError: (error) => {
-        const assistantErrorMessage = createMessage(
-          'assistant',
-          getApiErrorMessage(
-            error,
-            'Lo siento, hubo un error al procesar tu solicitud.',
-          ),
-        );
+          setFeedback(
+            getApiErrorMessage(
+              error,
+              'Lo siento, hubo un error al procesar tu solicitud.',
+            ),
+          );
 
-        updateSessionById(sessionId, (session) => ({
-          ...session,
-          status: 'Error en el análisis',
-          updatedAt: getCurrentIsoDate(),
-          messages: [...session.messages, assistantErrorMessage],
-        }));
+          recordAiEvent({
+            session_id: activeSessionId,
+            event_type: 'analysis_error',
+            metadata: {
+              detail: getApiErrorMessage(error, 'Error de analisis'),
+            },
+          });
+        },
       },
-      onSettled: () => {
-        setPendingSessionId((currentSessionId) =>
-          currentSessionId === sessionId ? null : currentSessionId,
-        );
+    );
+  };
+
+  const handleUploadAttachment = (file) => {
+    if (!activeSessionId || !file) return;
+
+    setFeedback(null);
+    uploadAttachment(
+      {
+        sessionId: activeSessionId,
+        file,
       },
-    });
+      {
+        onSuccess: (attachment) => {
+          recordAiEvent({
+            session_id: activeSessionId,
+            event_type: 'attachment_uploaded',
+            metadata: {
+              attachment_id: attachment?.id || null,
+              file_name: attachment?.file_name || file.name,
+            },
+          });
+        },
+        onError: (error) => {
+          setFeedback(getApiErrorMessage(error, 'No fue posible cargar el archivo.'));
+        },
+      },
+    );
   };
 
   return (
     <SidebarLayout fullWidth>
       <div className="bg-background-light dark:bg-background-dark text-[#121417] dark:text-white flex flex-col h-full font-display">
+        {feedback && (
+          <div className="px-6 py-2 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-200 dark:border-amber-700 text-xs text-amber-800 dark:text-amber-100">
+            {feedback}
+          </div>
+        )}
         <AIChatHeader
           onExportCase={handleExportCase}
-          isExportDisabled={!activeSession?.messages?.length}
+          isExportDisabled={!activeSessionId || isExporting}
         />
         <div className="flex flex-1 overflow-hidden">
           <ChatSidebar
             sessions={sessions}
-            activeSessionId={activeSession?.id}
+            activeSessionId={activeSessionId}
             onSelectSession={setActiveSessionId}
             onNewSession={handleCreateSession}
           />
           <ChatInterface
-            messages={activeSession?.messages || []}
+            messages={messages}
             input={input}
             onInputChange={setInput}
             onSend={handleSend}
-            isPending={isPending && pendingSessionId === activeSession?.id}
+            onUploadAttachment={handleUploadAttachment}
+            attachments={attachments}
+            isAttachmentPending={isUploadingAttachment}
+            isPending={
+              isSendingMessage ||
+              isCreatingSession ||
+              messagesQuery.isFetching ||
+              sessionsQuery.isFetching
+            }
           />
-          <ContextSidebar context={activeSession?.context} />
+          <ContextSidebar context={activeContext} />
         </div>
       </div>
     </SidebarLayout>

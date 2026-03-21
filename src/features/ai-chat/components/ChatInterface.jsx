@@ -5,9 +5,13 @@ export const ChatInterface = ({
   input,
   onInputChange,
   onSend,
+  onUploadAttachment,
+  attachments,
+  isAttachmentPending,
   isPending,
 }) => {
   const containerRef = React.useRef(null);
+  const fileInputRef = React.useRef(null);
 
   React.useEffect(() => {
     const container = containerRef.current;
@@ -17,6 +21,18 @@ export const ChatInterface = ({
       behavior: 'smooth',
     });
   }, [messages, isPending]);
+
+  const openFilePicker = () => {
+    if (isAttachmentPending) return;
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !onUploadAttachment) return;
+    onUploadAttachment(file);
+    event.target.value = '';
+  };
 
   return (
     <main className="flex-1 flex flex-col relative bg-[#f8fafc] dark:bg-background-dark min-w-0">
@@ -133,6 +149,8 @@ export const ChatInterface = ({
             <div className="flex justify-between items-center px-2 pb-2">
               <div className="pl-2 flex items-center gap-2">
                 <button
+                  onClick={openFilePicker}
+                  disabled={isAttachmentPending || isPending}
                   className="p-2 text-[#64748b] dark:text-gray-400 hover:text-primary transition-colors"
                   title="Adjuntar Archivo"
                 >
@@ -158,6 +176,22 @@ export const ChatInterface = ({
                 </span>
               </button>
             </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
+            {!!attachments?.length && (
+              <div className="px-4 pb-3 text-xs text-[#64748b] dark:text-gray-400">
+                Adjuntos recientes: {attachments
+                  .slice(0, 3)
+                  .map((item) => item.file_name)
+                  .join(', ')}
+              </div>
+            )}
           </div>
           <p className="text-center text-[10px] text-[#64748b] dark:text-gray-400 mt-2">
             La IA puede cometer errores. Verifique los datos críticos de
