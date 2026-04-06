@@ -10,17 +10,29 @@ import React from 'react';
 
 const SearchPage = () => {
   const [query, setQuery] = React.useState('');
+  const [filters, setFilters] = React.useState({
+    source: '',
+    program: '',
+    listed_after: '',
+    listed_before: '',
+  });
   const [uploadFeedback, setUploadFeedback] = React.useState(null);
   const fileInputRef = React.useRef(null);
 
   const user = useAuthStore((state) => state.user);
   const canUploadXml = Boolean(user?.is_superuser || user?.role === 'admin');
 
-  const { data: searchResults, isLoading } = useSearchSanctions(query);
+  const { data: searchResults, isLoading } = useSearchSanctions(query, filters);
   const { mutate: uploadSanctions, isPending: isUploading } = useUploadSanctions();
 
-  const handleSearch = (newQuery) => {
+  const handleSearch = ({ query: newQuery, filters: nextFilters }) => {
     setQuery(newQuery);
+    setFilters({
+      source: nextFilters?.source || '',
+      program: nextFilters?.program || '',
+      listed_after: nextFilters?.listed_after || '',
+      listed_before: nextFilters?.listed_before || '',
+    });
   };
 
   const handleClickUpload = () => {
@@ -91,6 +103,7 @@ const SearchPage = () => {
       </div>
       <SearchResultsTable
         results={searchResults?.results}
+        matchBreakdown={searchResults?.match_breakdown}
         isLoading={isLoading}
       />
     </SidebarLayout>

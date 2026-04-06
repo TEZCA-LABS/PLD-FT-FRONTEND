@@ -1,7 +1,7 @@
 import { useAuditHistory } from '../hooks/useAudit';
 
-export const AuditLogTable = () => {
-  const { data: auditLogs, isLoading, isError } = useAuditHistory();
+export const AuditLogTable = ({ params = {} }) => {
+  const { data: auditLogs, isLoading, isError } = useAuditHistory(params);
 
   if (isLoading) {
     return (
@@ -58,7 +58,7 @@ export const AuditLogTable = () => {
                       U
                     </div>
                     <span className="text-sm text-primary font-semibold">
-                      {log.user_email}
+                      {log.user_email || `Usuario #${log.user_id}`}
                     </span>
                   </div>
                 </td>
@@ -68,10 +68,10 @@ export const AuditLogTable = () => {
                   </span>
                 </td>
                 <td className="px-6 py-3 text-sm font-medium">
-                  {log.entity_name || 'N/A'}
+                  {log.entity_name || log.details?.query || 'N/A'}
                 </td>
                 <td className="px-6 py-3 text-sm font-mono text-[#617289]">
-                  {log.ip_address}
+                  {log.ip_address || log.details?.ip_address || 'N/A'}
                 </td>
                 <td className="px-6 py-3 text-right">
                   <button

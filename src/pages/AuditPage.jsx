@@ -1,7 +1,32 @@
 import { AuditFilters, AuditLogTable } from '@features/audit';
 import { SidebarLayout } from '@layouts/SidebarLayout';
+import React from 'react';
 
 const AuditPage = () => {
+  const [activeTab, setActiveTab] = React.useState('all');
+  const [filters, setFilters] = React.useState({
+    query_text: '',
+    action_contains: '',
+    date_from: '',
+    date_to: '',
+  });
+
+  const tabToAction = {
+    all: '',
+    user: 'SEARCH',
+    access: 'LOGIN',
+    kyc: 'KYC',
+  };
+
+  const auditQuery = {
+    skip: 0,
+    limit: 50,
+    query_text: filters.query_text || undefined,
+    action_contains: filters.action_contains || tabToAction[activeTab] || undefined,
+    timestamp_from: filters.date_from ? `${filters.date_from}T00:00:00` : undefined,
+    timestamp_to: filters.date_to ? `${filters.date_to}T23:59:59` : undefined,
+  };
+
   return (
     <SidebarLayout>
       <div className="flex flex-wrap justify-between items-end gap-3 mb-6">
@@ -29,12 +54,12 @@ const AuditPage = () => {
         </div>
       </div>
 
-      <AuditFilters />
+      <AuditFilters value={filters} onChange={setFilters} />
 
       <div className="flex border-b border-[#dbe0e6] dark:border-gray-700 px-4 gap-8 mb-4">
-        <a
-          className="flex items-center gap-2 border-b-[3px] border-b-primary text-primary pb-3 pt-4"
-          href="#"
+        <button
+          className={`flex items-center gap-2 border-b-[3px] ${activeTab === 'all' ? 'border-b-primary text-primary' : 'border-b-transparent text-[#617289] dark:text-gray-400'} pb-3 pt-4`}
+          onClick={() => setActiveTab('all')}
         >
           <p className="text-sm font-bold leading-normal tracking-[0.015em]">
             Todos los Registros
@@ -42,34 +67,34 @@ const AuditPage = () => {
           <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold tracking-tighter">
             14,208
           </span>
-        </a>
-        <a
-          className="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#617289] dark:text-gray-400 pb-3 pt-4 hover:text-primary transition-colors"
-          href="#"
+        </button>
+        <button
+          className={`flex flex-col items-center justify-center border-b-[3px] ${activeTab === 'user' ? 'border-b-primary text-primary' : 'border-b-transparent text-[#617289] dark:text-gray-400'} pb-3 pt-4 hover:text-primary transition-colors`}
+          onClick={() => setActiveTab('user')}
         >
           <p className="text-sm font-bold leading-normal tracking-[0.015em]">
             Actividad de Usuario
           </p>
-        </a>
-        <a
-          className="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#617289] dark:text-gray-400 pb-3 pt-4 hover:text-primary transition-colors"
-          href="#"
+        </button>
+        <button
+          className={`flex flex-col items-center justify-center border-b-[3px] ${activeTab === 'access' ? 'border-b-primary text-primary' : 'border-b-transparent text-[#617289] dark:text-gray-400'} pb-3 pt-4 hover:text-primary transition-colors`}
+          onClick={() => setActiveTab('access')}
         >
           <p className="text-sm font-bold leading-normal tracking-[0.015em]">
             Accesos al Sistema
           </p>
-        </a>
-        <a
-          className="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#617289] dark:text-gray-400 pb-3 pt-4 hover:text-primary transition-colors"
-          href="#"
+        </button>
+        <button
+          className={`flex flex-col items-center justify-center border-b-[3px] ${activeTab === 'kyc' ? 'border-b-primary text-primary' : 'border-b-transparent text-[#617289] dark:text-gray-400'} pb-3 pt-4 hover:text-primary transition-colors`}
+          onClick={() => setActiveTab('kyc')}
         >
           <p className="text-sm font-bold leading-normal tracking-[0.015em]">
             Modificaciones KYC
           </p>
-        </a>
+        </button>
       </div>
 
-      <AuditLogTable />
+      <AuditLogTable params={auditQuery} />
 
       <div className="mt-4 flex items-center justify-center gap-4 text-xs text-[#617289] bg-white/50 dark:bg-black/20 py-2 rounded-lg">
         <div className="flex items-center gap-1">

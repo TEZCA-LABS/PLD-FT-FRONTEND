@@ -2,14 +2,47 @@ import React from 'react';
 
 export const SearchFilters = ({ onSearch }) => {
   const [inputValue, setInputValue] = React.useState('');
+  const [source, setSource] = React.useState('');
+  const [program, setProgram] = React.useState('');
+  const [listedAfter, setListedAfter] = React.useState('');
+  const [listedBefore, setListedBefore] = React.useState('');
 
   const handleSubmit = () => {
-    if (onSearch) onSearch(inputValue);
+    if (onSearch) {
+      onSearch({
+        query: inputValue,
+        filters: {
+          source,
+          program,
+          listed_after: listedAfter,
+          listed_before: listedBefore,
+        },
+      });
+    }
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleSubmit();
+    }
+  };
+
+  const handleReset = () => {
+    setInputValue('');
+    setSource('');
+    setProgram('');
+    setListedAfter('');
+    setListedBefore('');
+    if (onSearch) {
+      onSearch({
+        query: '',
+        filters: {
+          source: '',
+          program: '',
+          listed_after: '',
+          listed_before: '',
+        },
+      });
     }
   };
 
@@ -43,49 +76,50 @@ export const SearchFilters = ({ onSearch }) => {
           Filtros:
         </span>
         <div className="relative inline-block text-left">
-          <button
-            className="inline-flex items-center gap-2 justify-center w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            type="button"
+          <label className="sr-only" htmlFor="source-filter">Fuente</label>
+          <select
+            id="source-filter"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            className="inline-flex items-center gap-2 justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
           >
-            <span className="material-symbols-outlined text-[18px] text-slate-400">
-              database
-            </span>
-            Todas las Fuentes
-            <span className="material-symbols-outlined text-[18px] text-slate-400 ml-1">
-              expand_more
-            </span>
-          </button>
+            <option value="">Todas las fuentes</option>
+            <option value="UN_CONSOLIDATED">UN</option>
+            <option value="MEX_PUBLIC">México</option>
+            <option value="SAT_69B">SAT 69-B</option>
+          </select>
         </div>
         <div className="relative inline-block text-left">
-          <button
-            className="inline-flex items-center gap-2 justify-center w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            type="button"
-          >
-            <span className="material-symbols-outlined text-[18px] text-slate-400">
-              domain
-            </span>
-            Tipo de Entidad
-            <span className="material-symbols-outlined text-[18px] text-slate-400 ml-1">
-              expand_more
-            </span>
-          </button>
+          <label className="sr-only" htmlFor="program-filter">Programa</label>
+          <input
+            id="program-filter"
+            type="text"
+            value={program}
+            onChange={(e) => setProgram(e.target.value)}
+            placeholder="Programa"
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          />
         </div>
-        <div className="relative inline-block text-left">
-          <button
-            className="inline-flex items-center gap-2 justify-center w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            type="button"
-          >
-            <span className="material-symbols-outlined text-[18px] text-slate-400">
-              calendar_today
-            </span>
-            Últimos 30 Días
-            <span className="material-symbols-outlined text-[18px] text-slate-400 ml-1">
-              expand_more
-            </span>
-          </button>
+        <div className="relative inline-block text-left flex items-center gap-2">
+          <input
+            type="date"
+            value={listedAfter}
+            onChange={(e) => setListedAfter(e.target.value)}
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          />
+          <span className="text-slate-400 text-xs">a</span>
+          <input
+            type="date"
+            value={listedBefore}
+            onChange={(e) => setListedBefore(e.target.value)}
+            className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+          />
         </div>
         <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
-        <button className="text-sm text-primary hover:text-primary/80 font-medium px-2">
+        <button
+          onClick={handleReset}
+          className="text-sm text-primary hover:text-primary/80 font-medium px-2"
+        >
           Limpiar Todo
         </button>
       </div>

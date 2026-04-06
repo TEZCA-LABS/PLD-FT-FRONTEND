@@ -1,7 +1,22 @@
-export const SearchResultsTable = ({ results, isLoading }) => {
+export const SearchResultsTable = ({ results, matchBreakdown, isLoading }) => {
   if (isLoading) {
     return <div className="p-8 text-center text-slate-500">Buscando...</div>;
   }
+
+  const getMatchLabel = (matchType) => {
+    if (!matchType) return 'N/A';
+    if (matchType.startsWith('cluster')) return 'Cluster';
+    if (matchType === 'exact') return 'Exacta';
+    if (matchType === 'fuzzy') return 'Difusa';
+    if (matchType === 'vector') return 'Semántica';
+    return matchType;
+  };
+
+  const renderScore = (score) => {
+    if (score === null || score === undefined) return 'N/A';
+    if (typeof score === 'number') return score.toFixed(3);
+    return String(score);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -12,6 +27,14 @@ export const SearchResultsTable = ({ results, isLoading }) => {
             {results?.length || 0} Coincidencias
           </span>
         </h3>
+        {matchBreakdown && (
+          <div className="hidden md:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <span>Exacta: {matchBreakdown.exact || 0}</span>
+            <span>Difusa: {matchBreakdown.fuzzy || 0}</span>
+            <span>Semántica: {matchBreakdown.vector || 0}</span>
+            <span>Cluster: {matchBreakdown.cluster || 0}</span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <button className="p-1.5 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">
             <span className="material-symbols-outlined text-[20px]">
@@ -52,6 +75,9 @@ export const SearchResultsTable = ({ results, isLoading }) => {
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap w-32">
                   Puntaje
                 </th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap w-40">
+                  Coincidencia
+                </th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap text-right">
                   Acciones
                 </th>
@@ -91,9 +117,12 @@ export const SearchResultsTable = ({ results, isLoading }) => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-red-600 dark:text-red-400">
-                        {item.score || 'N/A'}
+                        {renderScore(item.score)}
                       </span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                    {getMatchLabel(item.match_type)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
                     <button className="text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-colors opacity-0 group-hover:opacity-100">
@@ -107,7 +136,7 @@ export const SearchResultsTable = ({ results, isLoading }) => {
               {(!results || results.length === 0) && (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="7"
                     className="px-6 py-8 text-center text-sm text-slate-500"
                   >
                     No se encontraron resultados
