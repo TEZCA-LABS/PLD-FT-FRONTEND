@@ -7,6 +7,7 @@ export const ChatInterface = ({
   onSend,
   onUploadAttachment,
   attachments,
+  attachmentsLoading,
   isAttachmentPending,
   isPending,
 }) => {
@@ -127,6 +128,71 @@ export const ChatInterface = ({
             </div>
           </div>
         )}
+
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-[#1a232e]/60 p-4">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div>
+              <p className="text-sm font-semibold text-[#121417] dark:text-white">
+                Evidencia adjunta
+              </p>
+              <p className="text-xs text-[#64748b] dark:text-gray-400">
+                {attachmentsLoading
+                  ? 'Cargando adjuntos de la sesión...'
+                  : 'Los archivos cargados quedan visibles para revisión y exportación.'}
+              </p>
+            </div>
+            <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-700 dark:text-slate-300">
+              {attachments?.length || 0}
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            {attachmentsLoading && (
+              <div className="text-xs text-[#64748b] dark:text-gray-400">
+                Recuperando documentos asociados...
+              </div>
+            )}
+
+            {!attachmentsLoading && attachments?.length > 0 && (
+              attachments.slice(0, 5).map((item) => (
+                <div
+                  key={item.id || item.file_name}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#252f3d] px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-[#121417] dark:text-white">
+                      {item.file_name || item.filename || 'Archivo adjunto'}
+                    </p>
+                    <p className="text-[11px] text-[#64748b] dark:text-gray-400">
+                      {item.status || 'procesado'}
+                      {item.created_at ? ` • ${new Date(item.created_at).toLocaleString()}` : ''}
+                    </p>
+                  </div>
+                  {item.file_url ? (
+                    <a
+                      href={item.file_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs font-semibold text-primary hover:underline shrink-0"
+                    >
+                      Abrir
+                    </a>
+                  ) : (
+                    <span className="text-xs text-[#64748b] dark:text-gray-400 shrink-0">
+                      Sin enlace
+                    </span>
+                  )}
+                </div>
+              ))
+            )}
+
+            {!attachmentsLoading && (!attachments || attachments.length === 0) && (
+              <p className="text-xs text-[#64748b] dark:text-gray-400">
+                Aún no se han adjuntado evidencias en esta investigación.
+              </p>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Input Area */}

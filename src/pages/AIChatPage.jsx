@@ -291,6 +291,7 @@ const AIChatPage = () => {
             onSend={handleSend}
             onUploadAttachment={handleUploadAttachment}
             attachments={attachments}
+            attachmentsLoading={attachmentsQuery.isFetching}
             isAttachmentPending={isUploadingAttachment}
             isPending={
               isSendingMessage ||
