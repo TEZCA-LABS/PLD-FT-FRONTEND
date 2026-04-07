@@ -1,4 +1,9 @@
-export const AIChatHeader = ({ onExportCase, isExportDisabled }) => {
+export const AIChatHeader = ({
+  onExportCase,
+  isExportDisabled,
+  onToggleExportFormat,
+  exportFormat = 'pdf',
+}) => {
   return (
     <header className="h-16 flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e2e8f0] dark:border-gray-700 bg-white dark:bg-[#1a232e] px-6 z-20 shadow-sm shrink-0">
       <div className="flex items-center gap-4 text-[#121417] dark:text-white">
@@ -27,11 +32,18 @@ export const AIChatHeader = ({ onExportCase, isExportDisabled }) => {
         <div className="h-6 w-px bg-[#e2e8f0] dark:bg-gray-700"></div>
         <div className="flex gap-2">
           <button
+            onClick={onToggleExportFormat}
+            className="flex items-center justify-center rounded-lg h-9 px-3 bg-[#f8fafc] dark:bg-[#252f3d] hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-bold border border-[#e2e8f0] dark:border-gray-700"
+            title="Cambiar formato de exportación"
+          >
+            {exportFormat.toUpperCase()}
+          </button>
+          <button
             onClick={onExportCase}
             disabled={isExportDisabled}
             className="flex items-center justify-center rounded-lg h-9 px-4 bg-primary hover:bg-[#2c5c9e] transition-colors text-white text-sm font-bold shadow-sm disabled:opacity-50"
           >
-            <span className="truncate">Exportar Archivo del Caso</span>
+            <span className="truncate">Exportar Caso</span>
           </button>
           <button className="flex items-center justify-center rounded-lg size-9 bg-[#f8fafc] dark:bg-[#252f3d] hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-[#e2e8f0] dark:hover:border-gray-600 text-[#121417] dark:text-white transition-all">
             <span className="material-symbols-outlined text-xl">

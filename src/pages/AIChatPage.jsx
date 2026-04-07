@@ -77,6 +77,7 @@ const AIChatPage = () => {
   const [activeSessionId, setActiveSessionId] = React.useState(null);
   const [input, setInput] = React.useState('');
   const [feedback, setFeedback] = React.useState(null);
+  const [isExportingJson, setIsExportingJson] = React.useState(false);
 
   const sessionsQuery = useSessions({ skip: 0, limit: 20 });
   const sessions = React.useMemo(
@@ -164,13 +165,16 @@ const AIChatPage = () => {
       const data = await exportSession({
         sessionId: activeSessionId,
         options: {
-          format: 'pdf',
+          format: isExportingJson ? 'json' : 'pdf',
           include: ['messages', 'sources', 'entities', 'metadata'],
         },
       });
 
-      const blob = data instanceof Blob ? data : new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const extension = data instanceof Blob ? 'pdf' : 'json';
+      const isPdfExport = !isExportingJson;
+      const blob = data instanceof Blob
+        ? data
+        : new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const extension = isPdfExport ? 'pdf' : 'json';
       const downloadUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
@@ -183,7 +187,7 @@ const AIChatPage = () => {
       recordAiEvent({
         session_id: activeSessionId,
         event_type: 'case_exported',
-        metadata: { format: extension },
+        metadata: { format: extension, mode: isPdfExport ? 'download' : 'json' },
       });
     } catch (error) {
       setFeedback(getApiErrorMessage(error, 'No fue posible exportar el expediente.'));
@@ -192,7 +196,11 @@ const AIChatPage = () => {
 
   const handleSend = () => {
     const query = String(input || '').trim();
-    if (!query || !activeSessionId || isSendingMessage) return;
+    if (!query || isSendingMessage) return;
+    if (!activeSessionId) {
+      setFeedback('Primero crea o selecciona una investigación para enviar mensajes.');
+      return;
+    }
 
     setFeedback(null);
     setInput('');
@@ -274,6 +282,8 @@ const AIChatPage = () => {
           </div>
         )}
         <AIChatHeader
+          onToggleExportFormat={() => setIsExportingJson((prev) => !prev)}
+          exportFormat={isExportingJson ? 'json' : 'pdf'}
           onExportCase={handleExportCase}
           isExportDisabled={!activeSessionId || isExporting}
         />
