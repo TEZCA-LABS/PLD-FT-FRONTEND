@@ -2,18 +2,29 @@
 
 Proyecto moderno de React + Vite + TailwindCSS siguiendo una **Arquitectura Basada en Features** para máxima escalabilidad y mantenibilidad.
 
-## 🚀 Características
+## Características
 
-- ✅ **Arquitectura Basada en Features**: Código organizado por funcionalidad, no por tipo de archivo
-- ✅ **Co-ubicación**: Código relacionado mantenido junto
-- ✅ **Path Aliases**: Importaciones limpias sin `../../../`
-- ✅ **TailwindCSS**: Estilos modernos y responsivos
-- ✅ **TanStack Query**: Manejo eficiente de estado del servidor
-- ✅ **Zustand**: Estado global simple y performante
-- ✅ **React Router**: Navegación declarativa
-- ✅ **React Hook Form + Zod**: Validación de formularios robusta
+- **Arquitectura Basada en Features**: Código organizado por funcionalidad, no por tipo de archivo
+- **Co-ubicación**: Código relacionado mantenido junto
+- **Path Aliases**: Importaciones limpias sin `../../../`
+- **TailwindCSS**: Estilos modernos y responsivos
+- **TanStack Query**: Manejo eficiente de estado del servidor
+- **Zustand**: Estado global simple y performante
+- **React Router**: Navegación declarativa
+- **React Hook Form + Zod**: Validación de formularios robusta
 
-## 📁 Estructura del Proyecto
+## Enlaces relacionados
+
+### Documento de tesis Google Docs
+https://docs.google.com/document/d/1_FkgUz1kroUEUxOYc9tY1YGw7hadGMCo/edit?usp=sharing&ouid=117129143776158652215&rtpof=true&sd=true
+
+
+### Figma
+https://www.figma.com/design/vklVs1Dog1P2WgnDREba1h/PLD-FT?node-id=0-1&t=SXKX9OUfKaSOomU1-1
+
+---
+
+## Estructura del Proyecto
 
 ```
 src/
@@ -22,7 +33,7 @@ src/
 │   ├── ui/              # UI Kit (Button, Input, Card, Spinner)
 │   └── layout/          # Componentes de layout (Header, Footer)
 ├── config/              # Configuración (variables de entorno)
-├── features/            # 🎯 FEATURES - Lógica de negocio por dominio
+├── features/            # FEATURES - Lógica de negocio por dominio
 │   └── auth/            # Feature de autenticación
 │       ├── api/         # Endpoints de API
 │       ├── components/  # Componentes específicos del feature
@@ -40,17 +51,17 @@ src/
 └── index.css            # Estilos globales
 ```
 
-## 🎯 Principios de la Arquitectura
+## Principios de la Arquitectura
 
 ### 1. Feature Isolation (Aislamiento de Features)
 
 Cada feature es **auto-contenido** y no debe importar directamente de otros features hermanos.
 
 ```javascript
-// ❌ MAL - Importar de otro feature
+// MAL - Importar de otro feature
 import { ProductCard } from '@features/products/components/ProductCard';
 
-// ✅ BIEN - Usar componentes globales o exponer vía barrel file
+// BIEN - Usar componentes globales o exponer vía barrel file
 import { Card } from '@components/ui';
 ```
 
@@ -70,7 +81,7 @@ export { useLogin } from './hooks/useLogin';
 Los componentes deben ser "tontos". La lógica va en hooks personalizados:
 
 ```javascript
-// ✅ BIEN
+// BIEN
 const LoginForm = () => {
   const { mutate, isPending } = useLogin(); // Lógica en hook
   return <form>...</form>; // Solo UI
@@ -82,14 +93,14 @@ const LoginForm = () => {
 Usa alias configurados en `vite.config.js` para importaciones limpias:
 
 ```javascript
-// ❌ MAL
+// MAL
 import { Button } from '../../../components/ui/Button';
 
-// ✅ BIEN
+// BIEN
 import { Button } from '@components/ui';
 ```
 
-## 🛠️ Instalación
+## Instalación
 
 ```bash
 # Instalar dependencias
@@ -102,7 +113,7 @@ cp .env.example .env
 npm run dev
 ```
 
-## 📝 Scripts Disponibles
+## Scripts Disponibles
 
 ```bash
 npm run dev      # Inicia el servidor de desarrollo
@@ -111,7 +122,7 @@ npm run preview  # Previsualiza el build de producción
 npm run lint     # Ejecuta ESLint
 ```
 
-## 🎨 Stack Tecnológico
+## Stack Tecnológico
 
 - **React 18** - Librería de UI
 - **Vite** - Build tool ultrarrápido
@@ -123,7 +134,7 @@ npm run lint     # Ejecuta ESLint
 - **React Hook Form** - Manejo de formularios
 - **Zod** - Validación de esquemas
 
-## 📚 Cómo Agregar un Nuevo Feature
+## Cómo Agregar un Nuevo Feature
 
 1. **Crear la estructura del feature:**
 
@@ -203,9 +214,9 @@ const MiPagina = () => {
 };
 ```
 
-## 🎯 Buenas Prácticas
+## Buenas Prácticas
 
-### ✅ DO (Hacer)
+### DO (Hacer)
 
 - Mantener componentes pequeños y enfocados
 - Extraer lógica compleja a hooks personalizados
@@ -214,7 +225,7 @@ const MiPagina = () => {
 - Usar TanStack Query para datos del servidor
 - Mantener estilos co-ubicados con componentes
 
-### ❌ DON'T (No Hacer)
+### DON'T (No Hacer)
 
 - No crear carpetas gigantes de `components` mezclando todo
 - No importar directamente entre features hermanos
@@ -222,7 +233,7 @@ const MiPagina = () => {
 - No usar `../../../` en importaciones (usa path aliases)
 - No duplicar código entre features (muévelo a `components/` o `utils/`)
 
-## 🔒 Autenticación
+## Autenticación
 
 El proyecto incluye un feature completo de autenticación:
 
@@ -232,7 +243,7 @@ El proyecto incluye un feature completo de autenticación:
 
 El estado de autenticación se maneja con Zustand y persiste en localStorage.
 
-## 🌐 Variables de Entorno
+## Variables de Entorno
 
 Crea un archivo `.env` basado en `.env.example`:
 
@@ -242,7 +253,7 @@ VITE_API_URL=http://localhost:8000/api/v1
 
 Accede a las variables mediante `import.meta.env.VITE_*`
 
-## 📖 Recursos Adicionales
+## Recursos Adicionales
 
 - [React Documentation](https://react.dev)
 - [Vite Documentation](https://vitejs.dev)
