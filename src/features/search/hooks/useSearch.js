@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { searchSanctions, uploadSanctionsXml } from '../api/searchApi';
+import { searchSanctions, uploadSanctionsXml, syncSanctionsSource } from '../api/searchApi';
 
 /**
  * Hook to search sanctions
@@ -20,5 +20,14 @@ export const useUploadSanctions = () => {
   return useMutation({
     mutationFn: uploadSanctionsXml,
     // No auto-invalidation as upload might not affect search immediately or globally without query
+  });
+};
+
+/**
+ * Hook to trigger source synchronization
+ */
+export const useSyncSource = () => {
+  return useMutation({
+    mutationFn: syncSanctionsSource,
   });
 };

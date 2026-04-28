@@ -1,6 +1,6 @@
 import { useUsers } from '../hooks/useUsers';
 
-export const UsersTable = ({ onEdit }) => {
+export const UsersTable = ({ onEdit, searchTerm, roleFilter }) => {
   const { data: users, isLoading, isError } = useUsers();
 
   const roleNames = {
@@ -23,6 +23,12 @@ export const UsersTable = ({ onEdit }) => {
       </div>
     );
   }
+
+  const filteredUsers = users?.filter(user => {
+    const matchesSearch = searchTerm ? user.email.toLowerCase().includes(searchTerm.toLowerCase()) : true;
+    const matchesRole = roleFilter ? user.role === roleFilter : true;
+    return matchesSearch && matchesRole;
+  });
 
   return (
     <div className="bg-white dark:bg-[#1a2432] rounded-xl shadow-sm border border-[#f0f2f4] dark:border-[#2d3a4b] overflow-hidden">
@@ -48,7 +54,7 @@ export const UsersTable = ({ onEdit }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#f0f2f4] dark:divide-[#2d3a4b]">
-            {users?.map((user) => (
+            {filteredUsers?.map((user) => (
               <tr
                 key={user.id}
                 className="hover:bg-gray-50 dark:hover:bg-[#243040] transition-colors group"

@@ -59,3 +59,14 @@ export const uploadSanctionsXml = async (file) => {
   });
   return response.data;
 };
+
+/**
+ * Sync Sanctions Source via Celery (Admin only)
+ * @param {string} source - Source ID (un, mex, sat, ofac_sdn, ofac_cons)
+ * @returns {Promise} Sync trigger result
+ */
+export const syncSanctionsSource = async (source) => {
+  if (!source) throw new Error('Se requiere una fuente válida');
+  const response = await apiClient.post(`/sanctions/sync/${source}`);
+  return response.data;
+};

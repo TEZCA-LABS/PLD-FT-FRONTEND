@@ -1,4 +1,5 @@
 import { AuditFilters, AuditLogTable } from '@features/audit';
+import { useAuditHistory } from '@features/audit/hooks/useAudit';
 import { SidebarLayout } from '@layouts/SidebarLayout';
 import React from 'react';
 
@@ -27,6 +28,16 @@ const AuditPage = () => {
     timestamp_to: filters.date_to ? `${filters.date_to}T23:59:59` : undefined,
   };
 
+  const { data: auditData } = useAuditHistory(auditQuery);
+  const totalLogs = auditData?.total || 0;
+  
+  const lastUpdated = auditData?.items?.[0]?.timestamp 
+    ? new Date(auditData.items[0].timestamp).toLocaleString('es-MX', {
+        day: 'numeric', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      })
+    : new Date().toLocaleString('es-MX');
+
   return (
     <SidebarLayout>
       <div className="flex flex-wrap justify-between items-end gap-3 mb-6">
@@ -50,7 +61,7 @@ const AuditPage = () => {
           <p className="text-xs text-[#617289] dark:text-gray-400 font-medium">
             Última actualización
           </p>
-          <p className="text-sm font-bold">24 Mayo, 2024 - 14:32:01</p>
+          <p className="text-sm font-bold capitalize">{lastUpdated}</p>
         </div>
       </div>
 
@@ -65,7 +76,7 @@ const AuditPage = () => {
             Todos los Registros
           </p>
           <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold tracking-tighter">
-            14,208
+            {totalLogs.toLocaleString()}
           </span>
         </button>
         <button

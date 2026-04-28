@@ -5,6 +5,8 @@ import { useState } from 'react';
 const UsersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
 
   const handleCreate = () => {
     setEditingUser(null);
@@ -56,11 +58,17 @@ const UsersPage = () => {
                   className="w-full pl-10 pr-4 py-2.5 bg-[#f0f2f4] dark:bg-[#243040] border-none rounded-lg focus:ring-2 focus:ring-primary text-sm placeholder:text-[#617289] dark:text-white"
                   placeholder="Buscar por nombre o correo electrónico..."
                   type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
             </div>
             <div className="lg:col-span-4">
-              <select className="w-full px-3 py-2.5 bg-[#f0f2f4] dark:bg-[#243040] border-none rounded-lg focus:ring-2 focus:ring-primary text-sm dark:text-white">
+              <select 
+                className="w-full px-3 py-2.5 bg-[#f0f2f4] dark:bg-[#243040] border-none rounded-lg focus:ring-2 focus:ring-primary text-sm dark:text-white"
+                value={roleFilter}
+                onChange={(e) => setRoleFilter(e.target.value)}
+              >
                 <option value="">Filtrar por Rol: Todos</option>
                 <option value="admin">Administrador</option>
                 <option value="analista">Analista</option>
@@ -70,7 +78,7 @@ const UsersPage = () => {
           </div>
         </div>
 
-        <UsersTable onEdit={handleEdit} />
+        <UsersTable onEdit={handleEdit} searchTerm={searchTerm} roleFilter={roleFilter} />
 
         <UserModal
           isOpen={isModalOpen}
