@@ -64,24 +64,30 @@ export const Sidebar = () => {
             </span>
             <span className="text-sm font-bold">Búsqueda</span>
           </Link>
-          <Link
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
-            to="/users"
-          >
-            <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
-              group
-            </span>
-            <span className="text-sm font-medium">Usuarios</span>
-          </Link>
-          <Link
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
-            to="/roles"
-          >
-            <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
-              admin_panel_settings
-            </span>
-            <span className="text-sm font-medium">Roles y Permisos</span>
-          </Link>
+
+          {(user?.is_superuser || user?.role === 'admin') && (
+            <>
+              <Link
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                to="/users"
+              >
+                <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
+                  group
+                </span>
+                <span className="text-sm font-medium">Usuarios</span>
+              </Link>
+              <Link
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                to="/roles"
+              >
+                <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
+                  admin_panel_settings
+                </span>
+                <span className="text-sm font-medium">Roles y Permisos</span>
+              </Link>
+            </>
+          )}
+
           <Link
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
             to="/ai-chat"
@@ -91,15 +97,20 @@ export const Sidebar = () => {
             </span>
             <span className="text-sm font-medium">Asistente IA</span>
           </Link>
-          <Link
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
-            to="/audit"
-          >
-            <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
-              history
-            </span>
-            <span className="text-sm font-medium">Historial</span>
-          </Link>
+
+          {(user?.is_superuser ||
+            user?.role === 'admin' ||
+            user?.role === 'auditor') && (
+            <Link
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+              to="/audit"
+            >
+              <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
+                history
+              </span>
+              <span className="text-sm font-medium">Historial</span>
+            </Link>
+          )}
         </nav>
       </div>
       <div
