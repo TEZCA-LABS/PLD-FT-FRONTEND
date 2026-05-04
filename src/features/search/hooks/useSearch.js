@@ -1,5 +1,9 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { searchSanctions, uploadSanctionsXml, syncSanctionsSource } from '../api/searchApi';
+import {
+  searchSanctions,
+  syncSanctionsSource,
+  uploadSanctionsXml,
+} from '../api/searchApi';
 
 /**
  * Hook to search sanctions

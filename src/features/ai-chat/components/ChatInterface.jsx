@@ -153,7 +153,8 @@ export const ChatInterface = ({
               </div>
             )}
 
-            {!attachmentsLoading && attachments?.length > 0 && (
+            {!attachmentsLoading &&
+              attachments?.length > 0 &&
               attachments.slice(0, 5).map((item) => (
                 <div
                   key={item.id || item.file_name}
@@ -165,7 +166,9 @@ export const ChatInterface = ({
                     </p>
                     <p className="text-[11px] text-[#64748b] dark:text-gray-400">
                       {item.status || 'procesado'}
-                      {item.created_at ? ` • ${new Date(item.created_at).toLocaleString()}` : ''}
+                      {item.created_at
+                        ? ` • ${new Date(item.created_at).toLocaleString()}`
+                        : ''}
                     </p>
                   </div>
                   {item.file_url ? (
@@ -183,14 +186,14 @@ export const ChatInterface = ({
                     </span>
                   )}
                 </div>
-              ))
-            )}
+              ))}
 
-            {!attachmentsLoading && (!attachments || attachments.length === 0) && (
-              <p className="text-xs text-[#64748b] dark:text-gray-400">
-                Aún no se han adjuntado evidencias en esta investigación.
-              </p>
-            )}
+            {!attachmentsLoading &&
+              (!attachments || attachments.length === 0) && (
+                <p className="text-xs text-[#64748b] dark:text-gray-400">
+                  Aún no se han adjuntado evidencias en esta investigación.
+                </p>
+              )}
           </div>
         </div>
       </div>
@@ -252,7 +255,8 @@ export const ChatInterface = ({
 
             {!!attachments?.length && (
               <div className="px-4 pb-3 text-xs text-[#64748b] dark:text-gray-400">
-                Adjuntos recientes: {attachments
+                Adjuntos recientes:{' '}
+                {attachments
                   .slice(0, 3)
                   .map((item) => item.file_name)
                   .join(', ')}

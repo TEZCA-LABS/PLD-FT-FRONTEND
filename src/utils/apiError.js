@@ -14,9 +14,10 @@ export const getApiErrorMessage = (
     return fallbackMessage;
   }
 
-  const apiError = /** @type {{ response?: { data?: { detail?: string; message?: string } }; message?: string }} */ (
-    error
-  );
+  const apiError =
+    /** @type {{ response?: { data?: { detail?: string; message?: string } }; message?: string }} */ (
+      error
+    );
 
   return (
     apiError.response?.data?.detail ||

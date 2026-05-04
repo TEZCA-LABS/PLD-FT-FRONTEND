@@ -24,8 +24,10 @@ export const UsersTable = ({ onEdit, searchTerm, roleFilter }) => {
     );
   }
 
-  const filteredUsers = users?.filter(user => {
-    const matchesSearch = searchTerm ? user.email.toLowerCase().includes(searchTerm.toLowerCase()) : true;
+  const filteredUsers = users?.filter((user) => {
+    const matchesSearch = searchTerm
+      ? user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      : true;
     const matchesRole = roleFilter ? user.role === roleFilter : true;
     return matchesSearch && matchesRole;
   });

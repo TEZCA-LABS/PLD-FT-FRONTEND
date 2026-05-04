@@ -23,18 +23,25 @@ const AuditPage = () => {
     skip: 0,
     limit: 50,
     query_text: filters.query_text || undefined,
-    action_contains: filters.action_contains || tabToAction[activeTab] || undefined,
-    timestamp_from: filters.date_from ? `${filters.date_from}T00:00:00` : undefined,
+    action_contains:
+      filters.action_contains || tabToAction[activeTab] || undefined,
+    timestamp_from: filters.date_from
+      ? `${filters.date_from}T00:00:00`
+      : undefined,
     timestamp_to: filters.date_to ? `${filters.date_to}T23:59:59` : undefined,
   };
 
   const { data: auditData } = useAuditHistory(auditQuery);
   const totalLogs = auditData?.total || 0;
-  
-  const lastUpdated = auditData?.items?.[0]?.timestamp 
+
+  const lastUpdated = auditData?.items?.[0]?.timestamp
     ? new Date(auditData.items[0].timestamp).toLocaleString('es-MX', {
-        day: 'numeric', month: 'long', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
       })
     : new Date().toLocaleString('es-MX');
 

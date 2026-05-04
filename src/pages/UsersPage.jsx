@@ -64,7 +64,7 @@ const UsersPage = () => {
               </div>
             </div>
             <div className="lg:col-span-4">
-              <select 
+              <select
                 className="w-full px-3 py-2.5 bg-[#f0f2f4] dark:bg-[#243040] border-none rounded-lg focus:ring-2 focus:ring-primary text-sm dark:text-white"
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
@@ -78,7 +78,11 @@ const UsersPage = () => {
           </div>
         </div>
 
-        <UsersTable onEdit={handleEdit} searchTerm={searchTerm} roleFilter={roleFilter} />
+        <UsersTable
+          onEdit={handleEdit}
+          searchTerm={searchTerm}
+          roleFilter={roleFilter}
+        />
 
         <UserModal
           isOpen={isModalOpen}

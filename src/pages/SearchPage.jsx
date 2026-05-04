@@ -1,7 +1,9 @@
-import { SearchFilters, SearchResultsTable, AdminSourceManager } from '@features/search';
 import {
-  useSearchSanctions,
-} from '@features/search/hooks/useSearch';
+  AdminSourceManager,
+  SearchFilters,
+  SearchResultsTable,
+} from '@features/search';
+import { useSearchSanctions } from '@features/search/hooks/useSearch';
 import { SidebarLayout } from '@layouts/SidebarLayout';
 import { useAuthStore } from '@stores/authStore';
 import React from 'react';
@@ -17,7 +19,9 @@ const SearchPage = () => {
   const [isSourceManagerOpen, setIsSourceManagerOpen] = React.useState(false);
 
   const user = useAuthStore((state) => state.user);
-  const canManageSources = Boolean(user?.is_superuser || user?.role === 'admin');
+  const canManageSources = Boolean(
+    user?.is_superuser || user?.role === 'admin',
+  );
 
   const { data: searchResults, isLoading } = useSearchSanctions(query, filters);
 
@@ -48,7 +52,9 @@ const SearchPage = () => {
             disabled={!canManageSources}
             className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
           >
-            <span className="material-symbols-outlined text-base">settings</span>
+            <span className="material-symbols-outlined text-base">
+              settings
+            </span>
             Administrar Fuentes
           </button>
 
@@ -66,10 +72,10 @@ const SearchPage = () => {
         matchBreakdown={searchResults?.match_breakdown}
         isLoading={isLoading}
       />
-      
-      <AdminSourceManager 
-        isOpen={isSourceManagerOpen} 
-        onClose={() => setIsSourceManagerOpen(false)} 
+
+      <AdminSourceManager
+        isOpen={isSourceManagerOpen}
+        onClose={() => setIsSourceManagerOpen(false)}
       />
     </SidebarLayout>
   );

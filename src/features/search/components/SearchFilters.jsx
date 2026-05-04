@@ -76,7 +76,9 @@ export const SearchFilters = ({ onSearch }) => {
           Filtros:
         </span>
         <div className="relative inline-block text-left">
-          <label className="sr-only" htmlFor="source-filter">Fuente</label>
+          <label className="sr-only" htmlFor="source-filter">
+            Fuente
+          </label>
           <select
             id="source-filter"
             value={source}
@@ -92,7 +94,9 @@ export const SearchFilters = ({ onSearch }) => {
           </select>
         </div>
         <div className="relative inline-block text-left">
-          <label className="sr-only" htmlFor="program-filter">Programa</label>
+          <label className="sr-only" htmlFor="program-filter">
+            Programa
+          </label>
           <input
             id="program-filter"
             type="text"

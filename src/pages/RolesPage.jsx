@@ -3,9 +3,9 @@ import {
   useRolePermissions,
   useUpdateRolePermissions,
 } from '@features/roles/hooks/useRoles';
+import { SidebarLayout } from '@layouts/SidebarLayout';
 import { getApiErrorMessage } from '@utils/apiError';
 import React from 'react';
-import { SidebarLayout } from '@layouts/SidebarLayout';
 
 const RolesPage = () => {
   const [selectedRole, setSelectedRole] = React.useState('consultant');
@@ -70,7 +70,9 @@ const RolesPage = () => {
           setFeedback('Matriz de permisos actualizada correctamente.');
         },
         onError: (error) => {
-          setFeedback(getApiErrorMessage(error, 'No se pudieron guardar los cambios.'));
+          setFeedback(
+            getApiErrorMessage(error, 'No se pudieron guardar los cambios.'),
+          );
         },
       },
     );
@@ -108,7 +110,9 @@ const RolesPage = () => {
         </div>
 
         {feedback && (
-          <p className="text-sm text-[#617289] dark:text-gray-300">{feedback}</p>
+          <p className="text-sm text-[#617289] dark:text-gray-300">
+            {feedback}
+          </p>
         )}
 
         {isLoading && (

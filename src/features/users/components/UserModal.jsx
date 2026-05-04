@@ -1,41 +1,45 @@
 import { Button, Input } from '@components/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateUser, useUpdateUser } from '@features/users/hooks/useUsers';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { getApiErrorMessage } from '@utils/apiError';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const getSchema = (isEdit) =>
-  z.object({
-    email: z.string().email('Correo inválido'),
-    role: z.enum(['admin', 'auditor', 'consultant', 'user'], {
-      errorMap: () => ({ message: 'Rol inválido' }),
-    }),
-    is_active: z.boolean().optional(),
-    is_superuser: z.boolean().optional(),
-    password: isEdit
-      ? z.string().optional()
-      : z.string().min(1, 'La contraseña es obligatoria para nuevos usuarios'),
-    master_password: isEdit
-      ? z.string().optional()
-      : z.string().optional(),
-  }).superRefine((data, ctx) => {
-    if (!isEdit && data.is_superuser && !data.master_password?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['master_password'],
-        message: 'La contraseña maestra es obligatoria para crear superusuarios',
-      });
-    }
-  });
+  z
+    .object({
+      email: z.string().email('Correo inválido'),
+      role: z.enum(['admin', 'auditor', 'consultant', 'user'], {
+        errorMap: () => ({ message: 'Rol inválido' }),
+      }),
+      is_active: z.boolean().optional(),
+      is_superuser: z.boolean().optional(),
+      password: isEdit
+        ? z.string().optional()
+        : z
+            .string()
+            .min(1, 'La contraseña es obligatoria para nuevos usuarios'),
+      master_password: isEdit ? z.string().optional() : z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (!isEdit && data.is_superuser && !data.master_password?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['master_password'],
+          message:
+            'La contraseña maestra es obligatoria para crear superusuarios',
+        });
+      }
+    });
 
 export const UserModal = ({ isOpen, onClose, user }) => {
   const isEdit = !!user;
   const schema = useMemo(() => getSchema(isEdit), [isEdit]);
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
-  const isLoading = createUserMutation.isPending || updateUserMutation.isPending;
+  const isLoading =
+    createUserMutation.isPending || updateUserMutation.isPending;
   const [feedback, setFeedback] = useState(null);
 
   const {
@@ -93,13 +97,15 @@ export const UserModal = ({ isOpen, onClose, user }) => {
     }
 
     if (isEdit) {
-      delete finalData.email;
       delete finalData.master_password;
       updateUserMutation.mutate(
         { id: user.id, data: finalData },
         {
           onSuccess: () => {
-            setFeedback({ type: 'success', message: 'Usuario actualizado correctamente.' });
+            setFeedback({
+              type: 'success',
+              message: 'Usuario actualizado correctamente.',
+            });
             onClose();
           },
           onError: (error) => {
@@ -116,7 +122,10 @@ export const UserModal = ({ isOpen, onClose, user }) => {
 
     createUserMutation.mutate(finalData, {
       onSuccess: () => {
-        setFeedback({ type: 'success', message: 'Usuario creado correctamente.' });
+        setFeedback({
+          type: 'success',
+          message: 'Usuario creado correctamente.',
+        });
         onClose();
       },
       onError: (error) => {
@@ -152,7 +161,10 @@ export const UserModal = ({ isOpen, onClose, user }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="p-6 space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit, onInvalid)}
+          className="p-6 space-y-4"
+        >
           <Input
             label="Correo Electrónico"
             type="email"

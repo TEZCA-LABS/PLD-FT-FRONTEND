@@ -1,5 +1,3 @@
-import { getApiErrorMessage } from '@utils/apiError';
-import React from 'react';
 import {
   AIChatHeader,
   ChatInterface,
@@ -17,6 +15,8 @@ import {
 } from '@features/ai-chat/hooks/useIntelligence';
 import { useRecordAiEvent } from '@features/audit/hooks/useAudit';
 import { SidebarLayout } from '@layouts/SidebarLayout';
+import { getApiErrorMessage } from '@utils/apiError';
+import React from 'react';
 
 const deriveSessionTitle = (query) => {
   const normalized = String(query || '').trim();
@@ -50,7 +50,11 @@ const mapRelatedEntities = (entities) => {
 
     return {
       name: item?.name || item?.entity_name || `Entidad ${index + 1}`,
-      relation: item?.relationship || item?.relation || item?.role || 'Entidad relacionada',
+      relation:
+        item?.relationship ||
+        item?.relation ||
+        item?.role ||
+        'Entidad relacionada',
       type: item?.type || 'domain',
     };
   });
@@ -69,7 +73,9 @@ const mapContext = (context) => {
           url: context.source.url || null,
         }
       : null,
-    relatedEntities: mapRelatedEntities(context.related_entities || context.relatedEntities),
+    relatedEntities: mapRelatedEntities(
+      context.related_entities || context.relatedEntities,
+    ),
   };
 };
 
@@ -109,7 +115,10 @@ const AIChatPage = () => {
     [messagesQuery.data],
   );
 
-  const attachmentsQuery = useAttachments(activeSessionId, { skip: 0, limit: 10 });
+  const attachmentsQuery = useAttachments(activeSessionId, {
+    skip: 0,
+    limit: 10,
+  });
   const attachments = attachmentsQuery.data?.items || [];
 
   const activeContext = React.useMemo(() => {
@@ -128,7 +137,8 @@ const AIChatPage = () => {
   const { mutate: sendMessage, isPending: isSendingMessage } = useSendMessage();
   const { mutate: uploadAttachment, isPending: isUploadingAttachment } =
     useUploadAttachment();
-  const { mutateAsync: exportSession, isPending: isExporting } = useExportSession();
+  const { mutateAsync: exportSession, isPending: isExporting } =
+    useExportSession();
   const { mutate: recordAiEvent } = useRecordAiEvent();
 
   React.useEffect(() => {
@@ -152,7 +162,9 @@ const AIChatPage = () => {
           setInput('');
         },
         onError: (error) => {
-          setFeedback(getApiErrorMessage(error, 'No fue posible crear la sesion.'));
+          setFeedback(
+            getApiErrorMessage(error, 'No fue posible crear la sesion.'),
+          );
         },
       },
     );
@@ -171,9 +183,12 @@ const AIChatPage = () => {
       });
 
       const isPdfExport = !isExportingJson;
-      const blob = data instanceof Blob
-        ? data
-        : new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const blob =
+        data instanceof Blob
+          ? data
+          : new Blob([JSON.stringify(data, null, 2)], {
+              type: 'application/json',
+            });
       const extension = isPdfExport ? 'pdf' : 'json';
       const downloadUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -187,10 +202,15 @@ const AIChatPage = () => {
       recordAiEvent({
         session_id: activeSessionId,
         event_type: 'case_exported',
-        metadata: { format: extension, mode: isPdfExport ? 'download' : 'json' },
+        metadata: {
+          format: extension,
+          mode: isPdfExport ? 'download' : 'json',
+        },
       });
     } catch (error) {
-      setFeedback(getApiErrorMessage(error, 'No fue posible exportar el expediente.'));
+      setFeedback(
+        getApiErrorMessage(error, 'No fue posible exportar el expediente.'),
+      );
     }
   };
 
@@ -198,7 +218,9 @@ const AIChatPage = () => {
     const query = String(input || '').trim();
     if (!query || isSendingMessage) return;
     if (!activeSessionId) {
-      setFeedback('Primero crea o selecciona una investigación para enviar mensajes.');
+      setFeedback(
+        'Primero crea o selecciona una investigación para enviar mensajes.',
+      );
       return;
     }
 
@@ -225,8 +247,8 @@ const AIChatPage = () => {
               model: result?.model_version || 'unknown',
             },
           });
-      },
-      onError: (error) => {
+        },
+        onError: (error) => {
           setFeedback(
             getApiErrorMessage(
               error,
@@ -267,7 +289,9 @@ const AIChatPage = () => {
           });
         },
         onError: (error) => {
-          setFeedback(getApiErrorMessage(error, 'No fue posible cargar el archivo.'));
+          setFeedback(
+            getApiErrorMessage(error, 'No fue posible cargar el archivo.'),
+          );
         },
       },
     );

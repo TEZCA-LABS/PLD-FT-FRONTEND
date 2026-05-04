@@ -128,7 +128,6 @@ export const useAttachments = (sessionId, params = {}) => {
  */
 export const useExportSession = () => {
   return useMutation({
-    mutationFn: ({ sessionId, options }) =>
-      exportSession(sessionId, options),
+    mutationFn: ({ sessionId, options }) => exportSession(sessionId, options),
   });
 };

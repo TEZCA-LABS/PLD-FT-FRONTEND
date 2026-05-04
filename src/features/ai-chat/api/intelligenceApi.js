@@ -62,7 +62,9 @@ export const updateSession = async (sessionId, updates) => {
  * @returns {Promise} Deleted session
  */
 export const deleteSession = async (sessionId) => {
-  const response = await apiClient.delete(`/intelligence/sessions/${sessionId}`);
+  const response = await apiClient.delete(
+    `/intelligence/sessions/${sessionId}`,
+  );
   return response.data;
 };
 
@@ -153,7 +155,12 @@ export const exportSession = async (sessionId, options = {}) => {
     `/intelligence/sessions/${sessionId}/export`,
     {
       format: options.format || 'pdf',
-      include: options.include || ['messages', 'sources', 'entities', 'metadata'],
+      include: options.include || [
+        'messages',
+        'sources',
+        'entities',
+        'metadata',
+      ],
     },
     {
       responseType: options.format === 'pdf' ? 'blob' : 'json',

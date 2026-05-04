@@ -19,7 +19,8 @@ export const RoleDetailsSidebar = ({
   permissions,
   updatedAt,
 }) => {
-  const activeRole = roles.find((role) => role.key === selectedRole) || roles[0];
+  const activeRole =
+    roles.find((role) => role.key === selectedRole) || roles[0];
   const grantedPermissions = permissions.filter((permission) =>
     permission.allowed_roles.includes(activeRole?.key),
   );
@@ -79,9 +80,7 @@ export const RoleDetailsSidebar = ({
                 <span className="material-symbols-outlined text-red-500 text-lg">
                   cancel
                 </span>
-                <span>
-                  Permisos restringidos: {deniedPermissions.length}
-                </span>
+                <span>Permisos restringidos: {deniedPermissions.length}</span>
               </li>
             </ul>
           </div>
