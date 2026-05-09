@@ -261,3 +261,42 @@ Accede a las variables mediante `import.meta.env.VITE_*`
 - [TanStack Query Documentation](https://tanstack.com/query)
 - [Zustand Documentation](https://zustand-demo.pmnd.rs)
 
+## Docker
+
+Instrucciones rápidas para levantar el frontend con Docker.
+
+- Build y ejecutar (producción, sirve los archivos estáticos con `nginx`):
+
+```powershell
+cd PLD-FT-FRONTEND
+# Opcional: exportar la URL del API que usará la app. Por defecto apunta a Docker Desktop (Windows/mac):
+$env:VITE_API_URL = "http://host.docker.internal:8001/api/v1"
+docker compose up --build -d
+```
+
+Visita http://localhost:5173. Si quieres cambiar el backend al servicio dentro de una composición (misma red), usa:
+
+```env
+VITE_API_URL=http://backend:8001/api/v1
+```
+
+- Parar y limpiar:
+
+```powershell
+docker compose down
+```
+
+- Desarrollo en contenedor (hot-reload):
+
+Puedes crear una variante en `docker-compose.dev.yml` que use `node:18` y ejecute `npm run dev` mapeando el puerto `5173`. Ejemplo rápido (manual):
+
+```powershell
+# desde la carpeta PLD-FT-FRONTEND
+docker run --rm -it -v ${PWD}:/app -w /app -p 5173:5173 node:18-alpine sh -c "npm ci && npm run dev"
+```
+
+Notas:
+- En Docker Desktop para Windows/mac, `host.docker.internal` permite que el contenedor alcance servicios en el host (útil para apuntar al backend en localhost).
+- En entornos de producción multi-servicio, preferible apuntar `VITE_API_URL` al nombre del servicio backend (ej. `http://backend:8001/api/v1`) y usar una red de docker-compose compartida.
+
+
