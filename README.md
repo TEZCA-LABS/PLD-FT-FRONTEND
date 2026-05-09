@@ -248,7 +248,7 @@ El estado de autenticación se maneja con Zustand y persiste en localStorage.
 Crea un archivo `.env` basado en `.env.example`:
 
 ```env
-VITE_API_URL=http://localhost:8000/api/v1
+VITE_API_URL=http://localhost:8001/api/v1
 ```
 
 Accede a las variables mediante `import.meta.env.VITE_*`
