@@ -1,13 +1,18 @@
 version: '3.8'
+
 services:
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
       args:
+        # Nota: Estas variables se usan durante el 'build' (npm run build)
         VITE_API_URL: ${VITE_API_URL:-http://host.docker.internal:8001/api/v1}
     ports:
       - "5173:80"
     environment:
       - VITE_API_URL=${VITE_API_URL:-http://host.docker.internal:8001/api/v1}
+    # Esta es la pieza clave para resolver el error de Nginx
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
