@@ -1,7 +1,8 @@
 import { useAuditHistory } from '../hooks/useAudit';
 
-export const AuditLogTable = ({ params = {} }) => {
+export const AuditLogTable = ({ params = {}, activeTab = 'all' }) => {
   const { data: auditLogs, isLoading, isError } = useAuditHistory(params);
+  const hideActions = activeTab === 'access' || activeTab === 'kyc';
 
   if (isLoading) {
     return (
@@ -38,9 +39,11 @@ export const AuditLogTable = ({ params = {} }) => {
               <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-gray-300 uppercase tracking-wider">
                 IP de Origen
               </th>
-              <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-gray-300 uppercase tracking-wider text-right">
-                Acciones
-              </th>
+              {!hideActions && (
+                <th className="px-6 py-4 text-xs font-bold text-[#617289] dark:text-gray-300 uppercase tracking-wider text-right">
+                  Acciones
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-[#f0f2f4] dark:divide-gray-800">
@@ -73,17 +76,19 @@ export const AuditLogTable = ({ params = {} }) => {
                 <td className="px-6 py-3 text-sm font-mono text-[#617289]">
                   {log.ip_address || log.details?.ip_address || 'N/A'}
                 </td>
-                <td className="px-6 py-3 text-right">
-                  <button
-                    className="text-[#617289] hover:text-primary transition-colors flex items-center gap-1 ml-auto text-xs font-bold"
-                    title="Ver Log Detallado"
-                  >
-                    <span className="material-symbols-outlined text-lg">
-                      description
-                    </span>
-                    Ver Log
-                  </button>
-                </td>
+                {!hideActions && (
+                  <td className="px-6 py-3 text-right">
+                    <button
+                      className="text-[#617289] hover:text-primary transition-colors flex items-center gap-1 ml-auto text-xs font-bold"
+                      title="Ver Log Detallado"
+                    >
+                      <span className="material-symbols-outlined text-lg">
+                        description
+                      </span>
+                      Ver Log
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

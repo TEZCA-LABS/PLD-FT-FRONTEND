@@ -32,17 +32,17 @@ const AuditPage = () => {
   };
 
   const { data: auditData } = useAuditHistory(auditQuery);
-  const totalLogs = auditData?.total || 0;
+  const totalLogs = auditData?.length || 0;
 
-  const lastUpdated = auditData?.items?.[0]?.timestamp
-    ? new Date(auditData.items[0].timestamp).toLocaleString('es-MX', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      })
+  const lastUpdated = auditData?.[0]?.timestamp
+    ? new Date(auditData[0].timestamp).toLocaleString('es-MX', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
     : new Date().toLocaleString('es-MX');
 
   return (
@@ -112,22 +112,12 @@ const AuditPage = () => {
         </button>
       </div>
 
-      <AuditLogTable params={auditQuery} />
+      <AuditLogTable params={auditQuery} activeTab={activeTab} />
 
       <div className="mt-4 flex items-center justify-center gap-4 text-xs text-[#617289] bg-white/50 dark:bg-black/20 py-2 rounded-lg">
         <div className="flex items-center gap-1">
           <span className="material-symbols-outlined text-sm">lock</span>
           SHA-256 Verificado
-        </div>
-        <div className="h-1 w-1 rounded-full bg-gray-400"></div>
-        <div className="flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm">history</span>
-          Historial Completo desde 01/01/2023
-        </div>
-        <div className="h-1 w-1 rounded-full bg-gray-400"></div>
-        <div className="flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm">verified</span>
-          Certificado Compliance GDPR/AML
         </div>
       </div>
     </SidebarLayout>
