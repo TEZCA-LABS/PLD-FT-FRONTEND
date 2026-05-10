@@ -1,6 +1,6 @@
 import { useAuthStore } from '@stores/authStore';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const roleMap = {
   admin: 'Administrador',
@@ -12,8 +12,32 @@ const roleMap = {
 export const Sidebar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
+
+  const getLinkClass = (path) => {
+    const isActive = location.pathname.startsWith(path);
+    return `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group ${
+      isActive
+        ? 'bg-slate-100 dark:bg-slate-800 text-primary dark:text-blue-400'
+        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+    }`;
+  };
+
+  const getIconClass = (path) => {
+    const isActive = location.pathname.startsWith(path);
+    return `material-symbols-outlined text-[20px] transition-colors ${
+      isActive
+        ? 'fill-1 text-primary dark:text-blue-400'
+        : 'group-hover:text-primary dark:group-hover:text-blue-400'
+    }`;
+  };
+
+  const getTextClass = (path) => {
+    const isActive = location.pathname.startsWith(path);
+    return `text-sm ${isActive ? 'font-bold' : 'font-medium'}`;
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -56,59 +80,59 @@ export const Sidebar = () => {
         </div>
         <nav className="flex flex-col gap-1">
           <Link
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+            className={getLinkClass('/search')}
             to="/search"
           >
-            <span className="material-symbols-outlined text-[20px] fill-1">
+            <span className={getIconClass('/search')}>
               person_search
             </span>
-            <span className="text-sm font-bold">Búsqueda</span>
+            <span className={getTextClass('/search')}>Búsqueda</span>
           </Link>
 
           {(user?.is_superuser || user?.role === 'admin') && (
             <>
               <Link
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                className={getLinkClass('/users')}
                 to="/users"
               >
-                <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
+                <span className={getIconClass('/users')}>
                   group
                 </span>
-                <span className="text-sm font-medium">Usuarios</span>
+                <span className={getTextClass('/users')}>Usuarios</span>
               </Link>
               <Link
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+                className={getLinkClass('/roles')}
                 to="/roles"
               >
-                <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
+                <span className={getIconClass('/roles')}>
                   admin_panel_settings
                 </span>
-                <span className="text-sm font-medium">Roles y Permisos</span>
+                <span className={getTextClass('/roles')}>Roles y Permisos</span>
               </Link>
             </>
           )}
 
           <Link
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+            className={getLinkClass('/ai-chat')}
             to="/ai-chat"
           >
-            <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
+            <span className={getIconClass('/ai-chat')}>
               psychology
             </span>
-            <span className="text-sm font-medium">Asistente IA</span>
+            <span className={getTextClass('/ai-chat')}>Asistente IA</span>
           </Link>
 
           {(user?.is_superuser ||
             user?.role === 'admin' ||
             user?.role === 'auditor') && (
             <Link
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group"
+              className={getLinkClass('/audit')}
               to="/audit"
             >
-              <span className="material-symbols-outlined text-[20px] group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
+              <span className={getIconClass('/audit')}>
                 history
               </span>
-              <span className="text-sm font-medium">Historial</span>
+              <span className={getTextClass('/audit')}>Historial</span>
             </Link>
           )}
         </nav>

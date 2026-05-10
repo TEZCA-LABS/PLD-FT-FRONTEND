@@ -25,12 +25,6 @@ export const TopBar = () => {
             Modo Confidencial
           </span>
         </div>
-        <button className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <span className="material-symbols-outlined">notifications</span>
-        </button>
-        <button className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <span className="material-symbols-outlined">help</span>
-        </button>
       </div>
     </header>
   );
