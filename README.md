@@ -263,6 +263,15 @@ Accede a las variables mediante `import.meta.env.VITE_*`
 
 ## Docker
 
+### Según la versión de docker que se este usando los comandos pueden variar:
+
+```bash
+# Primera opción
+docker-compose
+
+# Segunda opción
+docker compose
+```
 Instrucciones rápidas para levantar el frontend con Docker.
 
 - Build y ejecutar (producción, sirve los archivos estáticos con `nginx`):
