@@ -22,6 +22,9 @@ https://docs.google.com/document/d/1_FkgUz1kroUEUxOYc9tY1YGw7hadGMCo/edit?usp=sh
 ### Figma
 https://www.figma.com/design/vklVs1Dog1P2WgnDREba1h/PLD-FT?node-id=0-1&t=SXKX9OUfKaSOomU1-1
 
+### Video del prototipo
+https://youtu.be/Ml1f9fDoPc4
+
 ---
 
 ## Estructura del Proyecto
