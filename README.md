@@ -18,6 +18,8 @@ Proyecto moderno de React + Vite + TailwindCSS siguiendo una **Arquitectura Basa
 ### Documento de tesis Google Docs
 https://docs.google.com/document/d/1_FkgUz1kroUEUxOYc9tY1YGw7hadGMCo/edit?usp=sharing&ouid=117129143776158652215&rtpof=true&sd=true
 
+### Presentación
+https://docs.google.com/presentation/d/1dwbvMQuOSI_LabYHrGYbsqr5MBHrUa_UoXSxAtEG93o/edit?usp=sharing
 
 ### Figma
 https://www.figma.com/design/vklVs1Dog1P2WgnDREba1h/PLD-FT?node-id=0-1&t=SXKX9OUfKaSOomU1-1
